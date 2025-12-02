@@ -1,0 +1,64 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Yarn v2+ (if you ever switch)
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Build & dist
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.example
+
+# Prisma
+prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+!/prisma/schema.prisma
+!/prisma/migrations/
+
+# Logs
+logs/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional: local testing files
+test/
+__tests__/
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Docker (jodi use koro)
+.docker/
+docker-compose.override.yml
