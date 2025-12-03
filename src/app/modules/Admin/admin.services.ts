@@ -1,8 +1,8 @@
-import { Prisma, PrismaClient } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constance";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
+import prisma from "../../../shared/prisma";
+import { Prisma } from "@prisma/client";
 
-const prisma = new PrismaClient();
 
 
 
