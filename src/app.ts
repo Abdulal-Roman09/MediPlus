@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import router from './app/routes';
 import globalErrorHandler from './app/middleWares/globalErrorHandler.ts';
+import httpStatus from 'http-status'
 
 const app: Application = express();
 
@@ -15,5 +16,17 @@ app.get('/', (req, res) => {
 });
 
 app.use(globalErrorHandler)
+
+app.use((req, res, next) => {
+  res.status(httpStatus.NOT_FOUND).json({
+    success: false,
+    message: 'Route not found',
+    error: {
+      path: req.originalUrl,
+      method: req.method,
+    },
+  });
+});
+
 
 export default app;
