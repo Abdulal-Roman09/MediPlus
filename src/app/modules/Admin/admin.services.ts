@@ -10,6 +10,11 @@ const getAllAdminFromDB = async (params: any, options: any) => {
 
   const andConditions: Prisma.AdminWhereInput[] = [];
 
+  // fileter soft deleted data
+  andConditions.push({
+    isDeleted: false
+  })
+  
   // SEARCH TERM
   if (searchTerm) {
     andConditions.push({
@@ -32,11 +37,6 @@ const getAllAdminFromDB = async (params: any, options: any) => {
       })),
     });
   }
-  // fileter soft deleted data \
-
-  andConditions.push({
-    isDeleted: false
-  })
 
   // FINAL WHERE CONDITION
   const whereCondition: Prisma.AdminWhereInput =
@@ -65,7 +65,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     data: result,
   };
 };
-const getSinlgeAdminFromDB = async (id: string): Promise<Admin | null> => {
+const getSingleAdminFromDB = async (id: string): Promise<Admin | null> => {
   const result = await prisma.admin.findUniqueOrThrow({
     where: {
       id,
@@ -146,7 +146,7 @@ const softDeleteAdminIntoDB = async (id: string) => {
 
 export const adminService = {
   getAllAdminFromDB,
-  getSinlgeAdminFromDB,
+  getSingleAdminFromDB,
   updateAdminIntoDB,
   deleteAdminIntoDB,
   softDeleteAdminIntoDB

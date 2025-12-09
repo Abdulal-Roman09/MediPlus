@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import httpStatus from "http-status-codes";
+import sendResponse from "../../../shared/sendResponse";
 import { adminService } from "./admin.services";
 import { pick } from "../../../shared/pick";
 import { adminFilterableFields } from "./admin.constance";
@@ -10,98 +12,156 @@ const getAllAdmin = async (req: Request, res: Response) => {
 
     const result = await adminService.getAllAdminFromDB(filters, options);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Admin data fetched successfully",
+      message: "Admins fetched successfully",
       meta: result.meta,
       data: result.data,
     });
   } catch (error) {
-    res.status(500).json({
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "Failed to fetch admin data",
-      error: error instanceof Error ? error.message : error,
+      message: "Failed to fetch admins",
+      meta: null,
+      data: null,
     });
   }
 };
-const getSinlgeAdmin = async (req: Request, res: Response) => {
-  const { id } = req.params
-  try {
-    const result = await adminService.getSinlgeAdminFromDB(id);
 
-    res.status(200).json({
+const getSingleAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await adminService.getSingleAdminFromDB(id);
+
+    if (!result) {
+      return sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        message: "Admin not found",
+        meta: null,
+        data: null,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "single Admin data fetched successfully",
-      data: result
+      message: "Admin fetched successfully",
+      data: result,
     });
   } catch (error) {
-    res.status(500).json({
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "Failed to fetch admin data",
-      error: error instanceof Error ? error.message : error,
+      message: "Failed to fetch admin",
+      meta: null,
+      data: null,
     });
   }
 };
 
 const updateAdmin = async (req: Request, res: Response) => {
-  const { id } = req.params
   try {
+    const { id } = req.params;
     const result = await adminService.updateAdminIntoDB(id, req.body);
 
-    res.status(200).json({
+    if (!result) {
+      return sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        message: "Admin not found or no changes made",
+        meta: null,
+        data: null,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Admin data update successfully",
-      data: result
+      message: "Admin updated successfully",
+      data: result,
     });
   } catch (error) {
-    res.status(500).json({
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "Failed to update admin data",
-      error: error instanceof Error ? error.message : error,
+      message: "Failed to update admin",
+      meta: null,
+      data: null,
     });
   }
 };
+
 const deleteAdmin = async (req: Request, res: Response) => {
-  const { id } = req.params
   try {
+    const { id } = req.params;
     const result = await adminService.deleteAdminIntoDB(id);
 
-    res.status(200).json({
+    if (!result) {
+      return sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        message: "Admin not found",
+        meta: null,
+        data: null,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Admin data delete successfully",
-      data: result
+      message: "Admin deleted successfully",
+      data: result,
     });
   } catch (error) {
-    res.status(500).json({
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "Failed to delete admin and user data",
-      error: error instanceof Error ? error.message : error,
+      message: "Failed to delete admin",
+      meta: null,
+      data: null,
     });
   }
 };
+
 const softDeleteAdmin = async (req: Request, res: Response) => {
-  const { id } = req.params
   try {
+    const { id } = req.params;
     const result = await adminService.softDeleteAdminIntoDB(id);
 
-    res.status(200).json({
+    if (!result) {
+      return sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        message: "Admin not found",
+        meta: null,
+        data: null,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Admin data softly delete successfully",
-      data: result
+      message: "Admin soft deleted successfully",
+      data: result,
     });
   } catch (error) {
-    res.status(500).json({
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "Failed to delete admin and user data",
-      error: error instanceof Error ? error.message : error,
+      message: "Failed to soft delete admin",
+      meta: null,
+      data: null,
     });
   }
 };
 
 export const adminController = {
   getAllAdmin,
-  getSinlgeAdmin,
+  getSingleAdmin,
   updateAdmin,
   deleteAdmin,
-  softDeleteAdmin
+  softDeleteAdmin,
 };
