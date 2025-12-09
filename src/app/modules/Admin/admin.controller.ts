@@ -79,10 +79,29 @@ const deleteAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+const softDeleteAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const result = await adminService.softDeleteAdminIntoDB(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin data softly delete successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete admin and user data",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
 
 export const adminController = {
   getAllAdmin,
   getSinlgeAdmin,
   updateAdmin,
-  deleteAdmin
+  deleteAdmin,
+  softDeleteAdmin
 };
