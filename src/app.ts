@@ -1,14 +1,12 @@
 import express, { Application } from 'express';
-import { userRoutes } from './app/modules/User/user.routes';
-import { AdminRoutes } from './app/modules/Admin/admin.routes';
+import router from './app/routes';
 
 const app: Application = express();
 
 app.use(express.json());
 
 // all routes
-app.use('/api/v1/users', userRoutes)
-app.use('/api/v1/admin', AdminRoutes)
+app.use('/api/v1/', router)
 
 // main routes
 app.get('/', (req, res) => {
