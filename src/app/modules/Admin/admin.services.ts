@@ -32,6 +32,11 @@ const getAllAdminFromDB = async (params: any, options: any) => {
       })),
     });
   }
+  // fileter soft deleted data \
+
+  andConditions.push({
+    isDeleted: false
+  })
 
   // FINAL WHERE CONDITION
   const whereCondition: Prisma.AdminWhereInput =
@@ -63,7 +68,8 @@ const getAllAdminFromDB = async (params: any, options: any) => {
 const getSinlgeAdminFromDB = async (id: string) => {
   const result = await prisma.admin.findUniqueOrThrow({
     where: {
-      id
+      id,
+      isDeleted: false
     }
   })
   return result
@@ -71,7 +77,8 @@ const getSinlgeAdminFromDB = async (id: string) => {
 const updateAdminIntoDB = async (id: string, data: Partial<Admin>) => {
   await prisma.admin.findUniqueOrThrow({
     where: {
-      id
+      id,
+      isDeleted: false
     }
   })
   const result = await prisma.admin.update({
@@ -84,7 +91,8 @@ const deleteAdminIntoDB = async (id: string) => {
 
   await prisma.admin.findUniqueOrThrow({
     where: {
-      id
+      id,
+      isDeleted:false
     }
   })
   const result = await prisma.$transaction(async (transactionClient) => {
