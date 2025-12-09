@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import router from './app/routes';
+import globalErrorHandler from './app/middleWares/globalErrorHandler.ts';
 
 const app: Application = express();
 
@@ -12,5 +13,7 @@ app.use('/api/v1/', router)
 app.get('/', (req, res) => {
   res.send('Hello from app.ts!');
 });
+
+app.use(globalErrorHandler)
 
 export default app;
