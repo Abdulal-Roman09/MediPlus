@@ -1,6 +1,6 @@
 import { adminSearchAbleFields } from "./admin.constance";
 import prisma from "../../../shared/prisma";
-import { Prisma } from "@prisma/client";
+import { Admin, Prisma } from "@prisma/client";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 
 const getAllAdminFromDB = async (params: any, options: any) => {
@@ -68,8 +68,16 @@ const getSinlgeAdminFromDB = async (id: string) => {
   })
   return result
 }
+const updateAdminIntoDB = async (id: string, data: Partial<Admin>) => {
+  const result = await prisma.admin.update({
+    where: { id },
+     data
+  })
+  return result
+}
 
 export const adminService = {
   getAllAdminFromDB,
-  getSinlgeAdminFromDB
+  getSinlgeAdminFromDB,
+  updateAdminIntoDB
 };

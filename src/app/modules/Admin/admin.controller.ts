@@ -44,7 +44,28 @@ const getSinlgeAdmin = async (req: Request, res: Response) => {
   }
 };
 
+const updateAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const result = await adminService.updateAdminIntoDB(id, req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin data update successfully",
+
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update admin data",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
+
 export const adminController = {
   getAllAdmin,
-  getSinlgeAdmin
+  getSinlgeAdmin,
+  updateAdmin
 };
