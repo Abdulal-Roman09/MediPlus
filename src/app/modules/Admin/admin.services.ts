@@ -1,13 +1,10 @@
 import { adminSearchAbleFields } from "./admin.constance";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import prisma from "../../../shared/prisma";
 import { Prisma } from "@prisma/client";
-
-
-
+import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 
 const getAllAdminFromDB = async (params: any, options: any) => {
-  const { skip, limit, sortBy, sortOrder } = calculatePagination(options);
+  const { skip, limit, page, sortBy, sortOrder } = calculatePagination(options);
 
   const { searchTerm, ...filterData } = params;
 
@@ -43,14 +40,25 @@ const getAllAdminFromDB = async (params: any, options: any) => {
   // QUERY
   const result = await prisma.admin.findMany({
     where: whereCondition,
-    skip: skip,
+    skip,
     take: limit,
     orderBy: {
       [sortBy]: sortOrder,
     },
   });
 
-  return result;
+  const total = await prisma.admin.count({
+    where: whereCondition,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 export const adminService = {
