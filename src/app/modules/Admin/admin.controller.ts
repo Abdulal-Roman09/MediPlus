@@ -32,7 +32,6 @@ const getSinlgeAdmin = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "single Admin data fetched successfully",
-
       data: result
     });
   } catch (error) {
@@ -52,7 +51,6 @@ const updateAdmin = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Admin data update successfully",
-
       data: result
     });
   } catch (error) {
@@ -63,9 +61,28 @@ const updateAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+const deleteAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const result = await adminService.deleteAdminIntoDB(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin data delete successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete admin and user data",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
 
 export const adminController = {
   getAllAdmin,
   getSinlgeAdmin,
-  updateAdmin
+  updateAdmin,
+  deleteAdmin
 };
