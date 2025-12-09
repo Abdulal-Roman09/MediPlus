@@ -24,7 +24,27 @@ const getAllAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+const getSinlgeAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const result = await adminService.getSinlgeAdminFromDB(id);
+
+    res.status(200).json({
+      success: true,
+      message: "single Admin data fetched successfully",
+
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch admin data",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
 
 export const adminController = {
   getAllAdmin,
+  getSinlgeAdmin
 };
