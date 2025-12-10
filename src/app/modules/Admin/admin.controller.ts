@@ -6,11 +6,13 @@ import { pick } from "../../../shared/pick";
 import { adminFilterableFields } from "./admin.constance";
 import catchAsync from "../../../shared/catchAsync";
 
+
 const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
   const result = await adminService.getAllAdminFromDB(filters, options);
+  console.log(options, "opptins")
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
