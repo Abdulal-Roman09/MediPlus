@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
-import { JwtPayload } from "../app/modules/auth/auth.interface";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import { JwtPayloadData } from "../app/modules/auth/auth.interface";
 
-const generateToken = (
-    payload: JwtPayload,
-    secret: string,
+export const generateToken = (
+    payload: JwtPayloadData,
+    secret: Secret,
     expiresIn: string
 ): string => {
     return jwt.sign(payload, secret, {
@@ -11,4 +11,6 @@ const generateToken = (
         expiresIn,
     });
 };
-export default generateToken
+export const verifyToken = (token: string, secret: Secret) => {
+   return  jwt.verify(token, secret) as JwtPayload
+}

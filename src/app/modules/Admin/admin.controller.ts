@@ -12,7 +12,7 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
   const result = await AdminService.getAllAdminFromDB(filters, options);
-  console.log(options, "opptins")
+
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
