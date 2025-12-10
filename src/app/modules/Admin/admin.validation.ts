@@ -7,6 +7,6 @@ const updateAdminZodSchema = z.object({
     }),
 });
 
-export const AdminValidation = {
+export const AdminValidationSchema = {
     updateAdminZodSchema,
 };
