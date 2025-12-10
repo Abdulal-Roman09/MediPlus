@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { IUserLogin } from "./auth.interface";
 import { generateToken, verifyToken } from "../../../halpers/jwtHelper";
 import { UserStatus } from "@prisma/client";
+import config from "../../../config";
 
 
 const loginUser = async (payload: IUserLogin) => {
@@ -23,10 +24,10 @@ const loginUser = async (payload: IUserLogin) => {
     }
 
     const accessToken = generateToken({ email: userData.email, role: userData.role },
-        "accessToken", "5m");
+        config.jwt.secret, config.jwt.expiresIn);
 
     const refreshToken = generateToken({ email: userData.email, role: userData.role },
-        "refreshToken", "365d");
+        config.refreshToken.secret, config.refreshToken.expiresIn);
 
     return {
         accessToken,
@@ -50,7 +51,7 @@ const refreshToken = async (token: string) => {
         }
     })
     const accessToken = generateToken({ email: userData.email, role: userData.role },
-        "accessToken", "5m");
+        config.jwt.secret, config.jwt.expiresIn);
     return {
         accessToken,
         needPasswordChange: userData.needPasswordChange,
