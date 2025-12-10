@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import sendResponse from "../../../shared/sendResponse";
-import { adminService } from "./admin.services";
+import { AdminService } from "./admin.services";
 import { pick } from "../../../shared/pick";
 import { adminFilterableFields } from "./admin.constance";
 import catchAsync from "../../../shared/catchAsync";
@@ -11,7 +11,7 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-  const result = await adminService.getAllAdminFromDB(filters, options);
+  const result = await AdminService.getAllAdminFromDB(filters, options);
   console.log(options, "opptins")
 
   sendResponse(res, {
@@ -25,7 +25,7 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.getSingleAdminFromDB(id);
+  const result = await AdminService.getSingleAdminFromDB(id);
 
   if (!result) {
     return sendResponse(res, {
@@ -47,7 +47,7 @@ const getSingleAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const updateAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.updateAdminIntoDB(id, req.body);
+  const result = await AdminService.updateAdminIntoDB(id, req.body);
 
   if (!result) {
     return sendResponse(res, {
@@ -68,7 +68,7 @@ const updateAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.deleteAdminIntoDB(id);
+  const result = await AdminService.deleteAdminIntoDB(id);
 
   if (!result) {
     return sendResponse(res, {
@@ -89,7 +89,7 @@ const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const softDeleteAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await adminService.softDeleteAdminIntoDB(id);
+  const result = await AdminService.softDeleteAdminIntoDB(id);
 
   if (!result) {
     return sendResponse(res, {
@@ -108,7 +108,7 @@ const softDeleteAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const adminController = {
+export const AdminController = {
   getAllAdmin,
   getSingleAdmin,
   updateAdmin,

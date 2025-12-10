@@ -146,7 +146,7 @@ const softDeleteAdminIntoDB = async (id: string) => {
 };
 
 
-export const adminService = {
+export const AdminService = {
   getAllAdminFromDB,
   getSingleAdminFromDB,
   updateAdminIntoDB,
