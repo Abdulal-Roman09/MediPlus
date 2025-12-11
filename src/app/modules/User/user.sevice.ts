@@ -3,18 +3,14 @@ import bcrypt from "bcryptjs";
 import prisma from "../../../shared/prisma";
 import config from "../../../config";
 import sendToCloudinary from "../../../halpers/imageUploads/sendToCloudinary";
-
-
+import { IUploadedFile } from "../../interfaces/file";
 
 const createAdmin = async (req: any) => {
 
-    console.log(req.body)
-
-    const file = req.file
+    const file: IUploadedFile = req.file
     if (file) {
         const uploadToCloudinary = await sendToCloudinary(file)
         req.body.admin.profilePhoto = uploadToCloudinary?.secure_url
-
     }
 
     const hashedPassword: string = await bcrypt.hash(req.body.password, config.saltRound)
