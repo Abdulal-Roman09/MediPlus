@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcryptjs";
 import { IUserLogin } from "./auth.interface";
@@ -5,9 +7,6 @@ import { generateToken, verifyToken } from "../../../halpers/jwtHelper";
 import { UserStatus } from "@prisma/client";
 import config from "../../../config";
 import emailSender from "./emailSender";
-import fs from 'fs';
-import path from 'path';
-
 
 
 const loginUser = async (payload: IUserLogin) => {
@@ -123,7 +122,6 @@ const forgetPassword = async (payload: { email: string }) => {
     // Replace Template Variables
     html = html.replace(/{{resetLink}}/g, resetPassLink);
 
-    // Send Email
     await emailSender(userData.email, html, "Password Reset – MediCare Hospital");
 
     return { message: 'Check your email' };
