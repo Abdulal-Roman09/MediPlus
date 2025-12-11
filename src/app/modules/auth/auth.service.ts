@@ -115,7 +115,7 @@ const forgetPassword = async (payload: { email: string }) => {
         config.resetPassToken.expiresIn
     );
 
-    const resetPassLink = `${config.resetPassToken.link}/reset-password?email=${userData.email}&token=${resetPassToken}`;
+    const resetPassLink = config.resetPassToken.link + `?userId=${userData.id}&token=${resetPassToken}`
 
     // Load HTML Template File
     const templatePath = path.join(__dirname, './resetPasswordTemplate.html');
@@ -133,7 +133,7 @@ const resetPassword = async (token: string, payload: IUserResetPass) => {
 
     const userData = await prisma.user.findFirstOrThrow({
         where: {
-            email: payload.email,
+            id: payload.id,
             status: UserStatus.ACTIVE
         }
     })
@@ -144,14 +144,14 @@ const resetPassword = async (token: string, payload: IUserResetPass) => {
 
         throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
     }
-    const hashedPassword: string = await bcrypt.hash(payload.password, config.saltRound)
+    const password = await bcrypt.hash(payload.password, config.saltRound)
 
     await prisma.user.update({
         where: {
-            email: payload.email
+            id: payload.id
         },
         data: {
-            password: hashedPassword,
+            password
         }
     })
     return {

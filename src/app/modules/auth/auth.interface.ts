@@ -9,6 +9,6 @@ export type JwtPayloadData = {
     role: string
 }
 export type IUserResetPass = {
-    email: string;
+    id: string;
     password: string
 }

@@ -3,8 +3,6 @@ import { AuthServices } from "./auth.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { Request, Response } from "express";
-import { any } from "zod";
-
 
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
@@ -60,6 +58,7 @@ const changePassword = catchAsync(async (req: Request & { user?: any }, res: Res
     })
 
 })
+
 const forgetPassword = catchAsync(async (req: Request, res: Response) => {
 
     const result = await AuthServices.forgetPassword(req.body)
@@ -73,6 +72,7 @@ const forgetPassword = catchAsync(async (req: Request, res: Response) => {
     })
 
 })
+
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
     const token = req.headers.authorization || ""
