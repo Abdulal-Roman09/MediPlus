@@ -3,6 +3,7 @@ import { AuthServices } from "./auth.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { Request, Response } from "express";
+import { any } from "zod";
 
 
 
@@ -29,6 +30,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     })
 
 })
+
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
     const { refreshToken } = req.cookies
 
@@ -37,18 +39,30 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "login in successfully",
+        message: "refresh token genarted in successfully",
         data: result,
-        // data: {
-        //     accessToken: result.accessToken,
-        //     needPasswordChange: result.needPasswordChange
 
-        // }
+    })
+
+})
+
+const changePassword = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+
+    const user = req.user
+    const result = await AuthServices.changePassword(user, req.body)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "password is changed successfully",
+        data: result,
+
     })
 
 })
 
 export const authController = {
     loginUser,
-    refreshToken
+    refreshToken,
+    changePassword
 }
