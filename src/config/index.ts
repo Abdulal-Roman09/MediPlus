@@ -17,6 +17,15 @@ export default {
         secret: process.env.REFRESH_TOKEN_SECRET as string,
         expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
     },
+    resetPassToken: {
+        secret: process.env.RESET_PASS_TOKEN as string,
+        expiresIn: process.env.RESET_PASS_TOKEN_EXPIRES_IN as string,
+        link: process.env.RESET_PASS_LINK as string
+    },
+    sendEmail: {
+        email: process.env.EMAIL as string,
+        app_pass: process.env.APP_PASS as string,
+    },
 
     databaseUrl: process.env.DATABASE_URL as string,
-};
+}
