@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
-import config from '../config';
-
+import config from '../../config';
 
 cloudinary.config({
     cloud_name: config.cloudinary.cloud_name,
@@ -9,8 +8,3 @@ cloudinary.config({
 });
 
 export default cloudinary;
-
-
-cloudinary.uploader
-    .upload("my_image.jpg")
-    .then(result => console.log(result));

@@ -1,8 +1,9 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { UserController } from './user.controller';
 import auth from '../../middleWares/auth';
 import { UserRole } from '@prisma/client';
-import fileUploader from '../../../halpers/fileUploader';
+import fileUploader from '../../../halpers/imageUploads/multer';
+import { UserValidationSchema } from './user.validation';
 
 const router = express.Router();
 
@@ -10,6 +11,10 @@ router.post(
     "/",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     fileUploader.upload.single('file'),
-    UserController.createAdmin);
+    (req: Request, res: Response, next: NextFunction) => {
+        req.body = UserValidationSchema.createAdmin.parse(JSON.parse(req.body.data))
+        return UserController.createAdmin(req, res, next)
+    },
+);
 
 export const UserRoutes = router;
