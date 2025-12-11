@@ -4,9 +4,7 @@ import auth from '../../middleWares/auth';
 import { UserRole } from '@prisma/client';
 import fileUploader from '../../../halpers/fileUploader';
 
-
 const router = express.Router();
-
 
 router.post(
     "/",
