@@ -2,11 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcryptjs";
-import { IUserLogin } from "./auth.interface";
+import { IUserLogin, IUserResetPass } from "./auth.interface";
 import { generateToken, verifyToken } from "../../../halpers/jwtHelper";
 import { UserStatus } from "@prisma/client";
 import config from "../../../config";
 import emailSender from "./emailSender";
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status'
 
 
 const loginUser = async (payload: IUserLogin) => {
@@ -43,7 +45,7 @@ const refreshToken = async (token: string) => {
     let decodeData
 
     try {
-        decodeData = verifyToken(token, 'refreshToken')
+        decodeData = verifyToken(token, config.refreshToken.secret)
     } catch (err) {
         throw new Error("you are not authrized")
     }
@@ -109,8 +111,8 @@ const forgetPassword = async (payload: { email: string }) => {
             email: userData.email,
             role: userData.role
         },
-        config.jwt.secret,
-        config.jwt.expiresIn
+        config.resetPassToken.secret,
+        config.resetPassToken.expiresIn
     );
 
     const resetPassLink = `${config.resetPassToken.link}/reset-password?email=${userData.email}&token=${resetPassToken}`;
@@ -127,9 +129,40 @@ const forgetPassword = async (payload: { email: string }) => {
     return { message: 'Check your email' };
 };
 
+const resetPassword = async (token: string, payload: IUserResetPass) => {
+
+    const userData = await prisma.user.findFirstOrThrow({
+        where: {
+            email: payload.email,
+            status: UserStatus.ACTIVE
+        }
+    })
+
+    const isValidToken = verifyToken(token, config.resetPassToken.secret);
+
+    if (!isValidToken) {
+
+        throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
+    }
+    const hashedPassword: string = await bcrypt.hash(payload.password, config.saltRound)
+
+    await prisma.user.update({
+        where: {
+            email: payload.email
+        },
+        data: {
+            password: hashedPassword,
+        }
+    })
+    return {
+        message: "password is reset successfully"
+    }
+}
+
 export const AuthServices = {
     loginUser,
     refreshToken,
     changePassword,
-    forgetPassword
+    forgetPassword,
+    resetPassword
 };

@@ -8,3 +8,7 @@ export type JwtPayloadData = {
     email: string;
     role: string
 }
+export type IUserResetPass = {
+    email: string;
+    password: string
+}
