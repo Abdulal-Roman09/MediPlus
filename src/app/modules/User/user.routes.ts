@@ -7,6 +7,11 @@ import { UserValidationSchema } from './user.validation';
 import validateRequest from '../../middleWares/validateRequest';
 
 const router = express.Router();
+router.get(
+    "/me",
+    auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.SUPER_ADMIN, UserRole.PATIENT),
+    UserController.getMe
+)
 
 router.get(
     "/",
@@ -49,5 +54,6 @@ router.patch(
     validateRequest(UserValidationSchema.changeUserStatus),
     UserController.changeProfileStatus
 )
+
 
 export const UserRoutes = router;

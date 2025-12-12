@@ -179,7 +179,7 @@ const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
 
 const changeProfileStatus = async (id: string, payload: { status: UserStatus }) => {
 
-    const userData = await prisma.user.findUniqueOrThrow({
+    await prisma.user.findUniqueOrThrow({
         where: {
             id
         }
@@ -194,7 +194,62 @@ const changeProfileStatus = async (id: string, payload: { status: UserStatus }) 
         }
 
     })
+
     return updateUserStatus
+}
+
+const getMe = async (payload: any) => {
+
+    const userData = await prisma.user.findFirstOrThrow({
+        where: {
+            email: payload.email
+        },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            needPasswordChange: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    })
+
+    let profileInfo
+
+    if (payload.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.findUnique({
+            where: {
+                email: payload.email
+            }
+        })
+    }
+
+    else if (payload.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.findUnique({
+            where: {
+                email: payload.email
+            }
+        })
+    }
+
+    else if (payload.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.findUnique({
+            where: {
+                email: payload.email
+            }
+        })
+    }
+
+    else if (payload.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.findUnique({
+            where: {
+                email: payload.email
+            }
+        })
+    }
+
+    return { ...userData, ...profileInfo }
 }
 
 export const UserService = {
@@ -202,5 +257,6 @@ export const UserService = {
     createDoctor,
     createPatient,
     getAllUserFromDB,
-    changeProfileStatus
+    changeProfileStatus,
+    getMe
 }
