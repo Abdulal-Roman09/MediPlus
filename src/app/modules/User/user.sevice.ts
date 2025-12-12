@@ -7,6 +7,7 @@ import { IUploadedFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { userFilterableFields, userSearchAbleFields } from "./user.contance";
+import { userInfo } from "os";
 
 const createAdmin = async (req: any): Promise<Admin> => {
 
@@ -198,7 +199,7 @@ const changeProfileStatus = async (id: string, payload: { status: UserStatus }) 
     return updateUserStatus
 }
 
-const getMe = async (payload: any) => {
+const getMyProfile = async (payload: any) => {
 
     const userData = await prisma.user.findFirstOrThrow({
         where: {
@@ -252,11 +253,64 @@ const getMe = async (payload: any) => {
     return { ...userData, ...profileInfo }
 }
 
+const updateMyProfile = async (user: any, req: Request) => {
+
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: { email: user.email }
+    });
+
+    const file = req.file as IUploadedFile;
+    if (file) {
+        const upload = await sendToCloudinary(file);
+        req.body.profilePhoto = upload?.secure_url;
+    }
+
+    let profileInfo;
+
+    if (userData.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userData.email
+            },
+            data: req.body
+        });
+    }
+
+    else if (userData.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userData.email
+            },
+            data: req.body
+        });
+    }
+
+    else if (userData.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.update({
+            where: {
+                email: userData.email
+            },
+            data: req.body
+        });
+    }
+
+    else if (userData.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.update({
+            where: {
+                email: userData.email
+            },
+            data: req.body
+        });
+    }
+    return { ...profileInfo }
+}
+
 export const UserService = {
     createAdmin,
     createDoctor,
     createPatient,
     getAllUserFromDB,
     changeProfileStatus,
-    getMe
+    getMyProfile,
+    updateMyProfile
 }
