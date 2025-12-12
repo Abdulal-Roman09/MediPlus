@@ -30,4 +30,5 @@ const createDoctor = z.object({
 
 export const UserValidationSchema = {
   createAdmin,
+  createDoctor
 };
