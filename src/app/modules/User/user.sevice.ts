@@ -1,11 +1,14 @@
-import { UserRole } from "@prisma/client";
+import { Admin, Doctor, Patient, Prisma, UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import prisma from "../../../shared/prisma";
 import config from "../../../config";
 import sendToCloudinary from "../../../halpers/imageUploads/sendToCloudinary";
 import { IUploadedFile } from "../../interfaces/file";
+import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
+import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
+import { userFilterableFields, userSearchAbleFields } from "./user.contance";
 
-const createAdmin = async (req: any) => {
+const createAdmin = async (req: any): Promise<Admin> => {
 
     const file: IUploadedFile = req.file
     if (file) {
@@ -36,7 +39,7 @@ const createAdmin = async (req: any) => {
     return result;
 };
 
-const createDoctor = async (req: any) => {
+const createDoctor = async (req: any): Promise<Doctor> => {
 
     const file: IUploadedFile = req.file
     if (file) {
@@ -67,7 +70,7 @@ const createDoctor = async (req: any) => {
     return result;
 };
 
-const createPatient = async (req: any) => {
+const createPatient = async (req: any): Promise<Patient> => {
 
     const file: IUploadedFile = req.file
     if (file) {
@@ -97,8 +100,73 @@ const createPatient = async (req: any) => {
 
     return result;
 };
+
+const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
+
+    const { skip, limit, page, sortBy, sortOrder } = calculatePagination(options);
+
+    const { searchTerm, ...otherParams } = params;
+
+    const filterData = Object.fromEntries(
+        Object.entries(otherParams).filter(([key]) =>
+            userFilterableFields.includes(key)
+        )
+    );
+
+    const andConditions: Prisma.UserWhereInput[] = [];
+
+    // Soft Delete Filter
+    andConditions.push({ isDeleted: false });
+
+    // Search Term
+    if (searchTerm) {
+        andConditions.push({
+            OR: userSearchAbleFields.map((field) => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                },
+            })),
+        });
+    }
+
+    // Direct Filters
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.entries(filterData).map(([field, value]) => ({
+                [field]: { equals: value },
+            })),
+        });
+    }
+
+    const whereCondition: Prisma.UserWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+    // DB Query
+    const result = await prisma.user.findMany({
+        where: whereCondition,
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy || "createdAt"]: sortOrder || "desc",
+        },
+    });
+
+    const total = await prisma.user.count({ where: whereCondition });
+
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result,
+    };
+};
+
 export const UserService = {
     createAdmin,
     createDoctor,
-    createPatient
+    createPatient,
+    getAllUserFromDB
 }
