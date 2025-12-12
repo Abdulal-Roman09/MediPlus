@@ -3,7 +3,7 @@ import cloudinary from "./cloudinary";
 import fs from 'fs'
 
 const sendToCloudinary = async (file: IUploadedFile): Promise<ICloudinaryResponse | undefined> => {
-    console.log(file)
+
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload(file.path,
             (error: Error, result: ICloudinaryResponse) => {
