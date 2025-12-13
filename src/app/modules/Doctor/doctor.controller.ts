@@ -36,15 +36,29 @@ const getSingleDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const deleteDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
+const updateDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
 
     const { id } = req.params
-    const result = await DoctorService.getSingleDoctrFromDB(id);
+    const result = await DoctorService.updateDoctorFromDB(id, req.body);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "doctors fetched successfully",
+        message: "doctors update  successfully",
+        data: result
+    });
+});
+
+
+const deleteDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
+
+    const { id } = req.params
+    const result = await DoctorService.deleteDoctrFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "doctors update successfully",
         data: result
     });
 });
@@ -66,6 +80,7 @@ const softDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
 export const DoctorController = {
     getAllDoctor,
     getSingleDoctrFromDB,
+    updateDoctrFromDB,
     deleteDoctrFromDB,
     softDoctrFromDB
 

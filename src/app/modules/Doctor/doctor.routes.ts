@@ -19,6 +19,12 @@ router.get(
     DoctorController.getSingleDoctrFromDB
 );
 
+router.patch(
+    "/update/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    DoctorController.updateDoctrFromDB
+);
+
 router.delete(
     "/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
