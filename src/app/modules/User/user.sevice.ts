@@ -8,6 +8,7 @@ import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { userFilterableFields, userSearchAbleFields } from "./user.contance";
 import { IAuthUser } from "../../interfaces/common";
+import { Request } from "express";
 
 const createAdmin = async (req: any): Promise<Admin> => {
 
@@ -253,7 +254,7 @@ const getMyProfile = async (payload: IAuthUser) => {
     return { ...userData, ...profileInfo }
 }
 
-const updateMyProfile = async (user: IAuthUser, req: Request) => {
+const updateMyProfile = async (user: IAuthUser, req: Request & { file: IUploadedFile }) => {
 
     const userData = await prisma.user.findUniqueOrThrow({
         where: { email: user?.email }

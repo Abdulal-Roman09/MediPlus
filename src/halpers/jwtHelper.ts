@@ -1,5 +1,5 @@
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import { JwtPayloadData } from "../app/modules/auth/auth.interface";
+import { JwtPayloadData } from "../app/modules/Auth/auth.interface";
 
 export const generateToken = (
     payload: JwtPayloadData,
@@ -12,5 +12,5 @@ export const generateToken = (
     });
 };
 export const verifyToken = (token: string, secret: Secret) => {
-   return  jwt.verify(token, secret) as JwtPayload
+    return jwt.verify(token, secret) as JwtPayload
 }
