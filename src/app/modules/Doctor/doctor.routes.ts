@@ -19,6 +19,12 @@ router.get(
     DoctorController.getSingleDoctrFromDB
 );
 
+router.delete(
+    "/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    DoctorController.deleteDoctrFromDB
+);
+
 
 
 export const DoctorRoutes = router;

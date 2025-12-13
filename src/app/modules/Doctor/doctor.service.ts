@@ -73,6 +73,16 @@ const getAllAdminFromDB = async (
 
 const getSingleDoctrFromDB = async (id: string) => {
 
+    return await prisma.doctor.findUnique({
+        where: {
+            id
+        }
+    })
+
+}
+
+const deleteDoctrFromDB = async (id: string) => {
+
     await prisma.doctor.findUnique({
         where: {
             id
@@ -89,5 +99,6 @@ const getSingleDoctrFromDB = async (id: string) => {
 
 export const DoctorService = {
     getAllAdminFromDB,
-    getSingleDoctrFromDB
+    getSingleDoctrFromDB,
+    deleteDoctrFromDB
 };
