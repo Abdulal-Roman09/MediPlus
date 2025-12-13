@@ -11,8 +11,14 @@ router.get(
     "/",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     DoctorController.getAllDoctor
-
 );
+
+router.get(
+    "/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    DoctorController.getAllDoctor
+);
+
 
 
 export const DoctorRoutes = router;
