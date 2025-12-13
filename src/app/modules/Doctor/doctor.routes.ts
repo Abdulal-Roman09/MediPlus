@@ -24,6 +24,11 @@ router.delete(
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     DoctorController.deleteDoctrFromDB
 );
+router.delete(
+    "/:id/soft-delete",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    DoctorController.deleteDoctrFromDB
+);
 
 
 

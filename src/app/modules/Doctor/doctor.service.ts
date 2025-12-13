@@ -1,5 +1,5 @@
 import prisma from "../../../shared/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, UserStatus } from "@prisma/client";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { doctorSearchableFields } from "./doctor.constants";
@@ -82,23 +82,51 @@ const getSingleDoctrFromDB = async (id: string) => {
 }
 
 const deleteDoctrFromDB = async (id: string) => {
+    return await prisma.$transaction(async transactionClient => {
 
-    await prisma.doctor.findUnique({
-        where: {
-            id
-        }
+        const deleteDoctor = await transactionClient.doctor.delete({
+            where: {
+                id
+            }
+        })
+
+        await transactionClient.user.delete({
+            where: {
+                email: deleteDoctor.email
+            }
+        })
+        return deleteDoctor
     })
-    const result = await prisma.doctor.delete({
-        where: {
-            id
-        }
+}
+const softDoctrFromDB = async (id: string, status: UserStatus) => {
+
+    return await prisma.$transaction(async transactionClient => {
+
+        const deleteDoctor = await transactionClient.doctor.update({
+            where: {
+                id
+            },
+            data: {
+                isDeleted: true
+            }
+        })
+
+        await transactionClient.user.update({
+            where: {
+                email: deleteDoctor.email
+            },
+            data: {
+                status: UserStatus.DELETED
+            }
+        })
+        return deleteDoctor
     })
-    return result
 }
 
 
 export const DoctorService = {
     getAllAdminFromDB,
     getSingleDoctrFromDB,
-    deleteDoctrFromDB
+    deleteDoctrFromDB,
+    softDoctrFromDB
 };
