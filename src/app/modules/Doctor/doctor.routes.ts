@@ -16,7 +16,7 @@ router.get(
 router.get(
     "/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-    DoctorController.getAllDoctor
+    DoctorController.getSingleDoctrFromDB
 );
 
 
