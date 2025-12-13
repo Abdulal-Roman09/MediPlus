@@ -7,6 +7,17 @@ import auth from '../../middleWares/auth';
 
 const router = express.Router();
 
+router.get(
+    '/',
+    SpecialtiesController.getAllSpecialties
+)
+
+router.delete(
+    '/:id',
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    SpecialtiesController.deleteSpecialties
+)
+
 router.post(
     '/',
     auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.SUPER_ADMIN, UserRole.PATIENT),

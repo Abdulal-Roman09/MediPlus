@@ -15,7 +15,32 @@ const SpecialtiesinsertIntoDB = catchAsync(async (req: Request, res: Response) =
   });
 });
 
+const getAllSpecialties = catchAsync(async (req: Request, res: Response) => {
+  const result = await SpecialtiesServices.getAllSpecialtiesFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Specialties retrieved successfully",
+    data: result,
+  });
+});
+
+const deleteSpecialties = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const result = await SpecialtiesServices.deleteSpecialties(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Specialties deleted successfully",
+    data: result,
+  });
+});
+
 
 export const SpecialtiesController = {
-SpecialtiesinsertIntoDB
+  SpecialtiesinsertIntoDB,
+  getAllSpecialties,
+  deleteSpecialties
 };
