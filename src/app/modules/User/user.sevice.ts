@@ -7,7 +7,7 @@ import { IUploadedFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { userFilterableFields, userSearchAbleFields } from "./user.contance";
-import { userInfo } from "os";
+import { IAuthUser } from "../../interfaces/common";
 
 const createAdmin = async (req: any): Promise<Admin> => {
 
@@ -199,11 +199,11 @@ const changeProfileStatus = async (id: string, payload: { status: UserStatus }) 
     return updateUserStatus
 }
 
-const getMyProfile = async (payload: any) => {
+const getMyProfile = async (payload: IAuthUser) => {
 
     const userData = await prisma.user.findFirstOrThrow({
         where: {
-            email: payload.email
+            email: payload?.email
         },
         select: {
             id: true,
@@ -218,34 +218,34 @@ const getMyProfile = async (payload: any) => {
 
     let profileInfo
 
-    if (payload.role === UserRole.SUPER_ADMIN) {
+    if (userData.role === UserRole.SUPER_ADMIN) {
         profileInfo = await prisma.admin.findUnique({
             where: {
-                email: payload.email
+                email: userData.email
             }
         })
     }
 
-    else if (payload.role === UserRole.ADMIN) {
+    else if (userData.role === UserRole.ADMIN) {
         profileInfo = await prisma.admin.findUnique({
             where: {
-                email: payload.email
+                email: userData.email
             }
         })
     }
 
-    else if (payload.role === UserRole.DOCTOR) {
+    else if (userData.role === UserRole.DOCTOR) {
         profileInfo = await prisma.doctor.findUnique({
             where: {
-                email: payload.email
+                email: userData.email
             }
         })
     }
 
-    else if (payload.role === UserRole.PATIENT) {
+    else if (userData.role === UserRole.PATIENT) {
         profileInfo = await prisma.patient.findUnique({
             where: {
-                email: payload.email
+                email: userData.email
             }
         })
     }
@@ -253,10 +253,10 @@ const getMyProfile = async (payload: any) => {
     return { ...userData, ...profileInfo }
 }
 
-const updateMyProfile = async (user: any, req: Request) => {
+const updateMyProfile = async (user: IAuthUser, req: Request) => {
 
     const userData = await prisma.user.findUniqueOrThrow({
-        where: { email: user.email }
+        where: { email: user?.email }
     });
 
     const file = req.file as IUploadedFile;
