@@ -62,3 +62,17 @@ coverage/
 # Docker (jodi use koro)
 .docker/
 docker-compose.override.yml
+
+# Auto-committer ignored files
+*.cache
+*.dll
+*.exe
+*.env
+.vscode/**
+.idea/**
+.vs/**
+node_modules/**
+.git/**
+dist/**
+build/**
+*.swo

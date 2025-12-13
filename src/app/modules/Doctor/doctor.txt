@@ -1,0 +1,26 @@
+router.get(
+    "/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+
+
+);
+
+router.patch(
+    "/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    validateRequest(DoctorValidationSchema.updateDoctorZodSchema),
+
+
+);
+
+router.delete(
+    "/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+
+);
+
+router.delete(
+    "/soft/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+
+);
