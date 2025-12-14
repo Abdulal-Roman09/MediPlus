@@ -2,7 +2,7 @@ import prisma from "../../../shared/prisma";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { patientSearchAbleFields } from "./patient.contance";
-import { Prisma } from "@prisma/client";
+import { Prisma, UserStatus } from "@prisma/client";
 
 const getAllPatientFromDB = async (params: any, options: IPaginationOptions) => {
     const { skip, limit, page, } = calculatePagination(options);
@@ -84,9 +84,30 @@ const getSinglePatientFromDB = async (id: string) => {
     return result
 }
 
+const softDeletePatientFromDB = async (id: string) => {
+    return await prisma.$transaction(async tx => {
+        const deletePatient = await tx.patient.update({
+            where: { id },
+            data: {
+                isDeleted: true
+            }
+        })
+        await tx.user.update({
+            where: {
+                email: deletePatient.email
+            },
+            data: {
+                status: UserStatus.DELETED
+            }
+        })
+        return deletePatient
+    })
+
+}
 
 
 export const PatientService = {
     getAllPatientFromDB,
-    getSinglePatientFromDB
+    getSinglePatientFromDB,
+    softDeletePatientFromDB
 };

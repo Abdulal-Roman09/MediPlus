@@ -11,5 +11,9 @@ router.get(
     '/:id',
     PatientController.getSinglePatient
 )
+router.delete(
+    '/soft-delete/:id',
+    PatientController.softDeletePatient
+)
 
 export const PatientRoutes = router
