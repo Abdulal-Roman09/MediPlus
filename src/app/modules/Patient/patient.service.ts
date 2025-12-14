@@ -70,6 +70,7 @@ const getAllPatientFromDB = async (params: any, options: IPaginationOptions) => 
         data: result,
     };
 };
+
 const getSinglePatientFromDB = async (id: string) => {
     const result = await prisma.patient.findUnique({
         where: {
@@ -82,6 +83,32 @@ const getSinglePatientFromDB = async (id: string) => {
         }
     })
     return result
+}
+
+const deletePatientFromDB = async (id: string) => {
+
+    const result = await prisma.$transaction(async tx => {
+        // delete medical report
+        await tx.medicalReport.deleteMany({
+            where: { patientId: id }
+        })
+        // delete health data
+        await tx.patientHealthData.deleteMany({
+            where: { patientId: id }
+        })
+
+        // delete patient
+        const deletePatient = await tx.patient.delete({
+            where: { id }
+        })
+        // delete user
+        await tx.user.delete({
+            where: { email: deletePatient.email }
+        })
+        return deletePatient
+    })
+    return result
+
 }
 
 const softDeletePatientFromDB = async (id: string) => {
@@ -105,9 +132,9 @@ const softDeletePatientFromDB = async (id: string) => {
 
 }
 
-
 export const PatientService = {
     getAllPatientFromDB,
     getSinglePatientFromDB,
+    deletePatientFromDB,
     softDeletePatientFromDB
 };
