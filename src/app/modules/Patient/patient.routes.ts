@@ -11,6 +11,11 @@ router.get(
     '/:id',
     PatientController.getSinglePatient
 )
+router.patch(
+    '/update/:id',
+    PatientController.updatePatient
+)
+
 router.delete(
     '/delete/:id',
     PatientController.deletePatient
