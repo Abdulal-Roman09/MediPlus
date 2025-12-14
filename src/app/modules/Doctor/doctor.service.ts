@@ -5,13 +5,10 @@ import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { doctorSearchableFields } from "./doctor.constants";
 import { IDoctorFilterRequest } from "./doctor.interface";
 
-const getAllAdminFromDB = async (
-    params: IDoctorFilterRequest,
-    options: IPaginationOptions
-) => {
+const getAllDoctorFromDB = async (params: IDoctorFilterRequest, options: IPaginationOptions) => {
     const { skip, limit, page, sortBy, sortOrder } = calculatePagination(options);
 
-    const { searchTerm, ...filterData } = params;
+    const { searchTerm, specialties, ...filterData } = params;
 
     const andConditions: Prisma.DoctorWhereInput[] = [];
 
@@ -30,6 +27,21 @@ const getAllAdminFromDB = async (
                 },
             })),
         });
+    }
+
+    if (specialties && specialties.length > 0) {
+        andConditions.push({
+            doctorSpecialties: {
+                some: {
+                    specialty: {
+                        title: {
+                            contains: specialties,
+                            mode: 'insensitive'
+                        }
+                    }
+                }
+            }
+        })
     }
 
     // DIRECT FIELD FILTERING
@@ -52,9 +64,16 @@ const getAllAdminFromDB = async (
         where: whereCondition,
         skip,
         take: limit,
-        orderBy: {
-            [sortBy]: sortOrder,
-        },
+        orderBy: options.sortBy && options.sortOrder
+            ? { [options.sortBy]: options.sortOrder }
+            : { createdAt: 'desc' },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialty: true
+                }
+            }
+        }
     });
 
     const total = await prisma.doctor.count({
@@ -184,7 +203,7 @@ const softDoctrFromDB = async (id: string, status: UserStatus) => {
 }
 
 export const DoctorService = {
-    getAllAdminFromDB,
+    getAllDoctorFromDB,
     getSingleDoctrFromDB,
     updateDoctorFromDB,
     deleteDoctrFromDB,
