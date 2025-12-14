@@ -70,11 +70,23 @@ const getAllPatientFromDB = async (params: any, options: IPaginationOptions) => 
         data: result,
     };
 };
-
+const getSinglePatientFromDB = async (id: string) => {
+    const result = await prisma.patient.findUnique({
+        where: {
+            id,
+            isDeleted: false
+        },
+        include: {
+            medicalReports: true,
+            patientHealthData: true
+        }
+    })
+    return result
+}
 
 
 
 export const PatientService = {
     getAllPatientFromDB,
-
+    getSinglePatientFromDB
 };

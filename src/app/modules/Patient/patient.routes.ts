@@ -7,6 +7,9 @@ router.get(
     '/',
     PatientController.getAllPatient
 )
-
+router.get(
+    '/:id',
+    PatientController.getSinglePatient
+)
 
 export const PatientRoutes = router
