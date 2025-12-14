@@ -13,11 +13,10 @@ const getAllAdmin = catchAsync(async (req: Request, res: Response) => {
 
   const result = await AdminService.getAllAdminFromDB(filters, options);
 
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admins fetched successfully",
+    message: "Administrators successfully retrieved",
     meta: result.meta,
     data: result.data,
   });
@@ -27,19 +26,10 @@ const getSingleAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await AdminService.getSingleAdminFromDB(id);
 
-  if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: "Admin not found",
-      data: null,
-    });
-  }
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin fetched successfully",
+    message: "Administrator successfully retrieved",
     data: result,
   });
 });
@@ -49,19 +39,10 @@ const updateAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await AdminService.updateAdminIntoDB(id, req.body);
 
-  if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: "Admin not found or no changes made",
-      data: null,
-    });
-  }
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin updated successfully",
+    message: "Administrator successfully updated",
     data: result,
   });
 });
@@ -70,19 +51,10 @@ const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await AdminService.deleteAdminIntoDB(id);
 
-  if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: "Admin not found",
-      data: null,
-    });
-  }
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin deleted successfully",
+    message: "Administrator permanently deleted successfully",
     data: result,
   });
 });
@@ -91,19 +63,10 @@ const softDeleteAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await AdminService.softDeleteAdminIntoDB(id);
 
-  if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: "Admin not found",
-      data: null,
-    });
-  }
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin soft deleted successfully",
+    message: "Administrator successfully soft deleted",
     data: result,
   });
 });

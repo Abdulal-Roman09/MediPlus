@@ -10,7 +10,7 @@ const SpecialtiesinsertIntoDB = catchAsync(async (req: Request, res: Response) =
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Specialties Create successfully",
+    message: "Specialty created successfully",
     data: result,
   });
 });
@@ -33,7 +33,7 @@ const deleteSpecialties = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Specialties deleted successfully",
+    message: "Specialty deleted successfully",
     data: result,
   });
 });

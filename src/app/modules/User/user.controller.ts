@@ -7,7 +7,6 @@ import { userFilterableFields } from "./user.contance";
 import { pick } from "../../../shared/pick";
 import { IAuthUser } from "../../interfaces/common";
 
-
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
 
     const result = await UserService.createAdmin(req);
@@ -15,7 +14,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
         success: true,
-        message: "Admin created successfully",
+        message: "Administrator account created successfully",
         data: result,
     });
 });
@@ -24,9 +23,9 @@ const createDoctor = catchAsync(async (req: Request, res: Response) => {
 
     const result = await UserService.createDoctor(req);
     sendResponse(res, {
-        statusCode: httpStatus.OK,
+        statusCode: httpStatus.CREATED,
         success: true,
-        message: "Doctor Created successfuly!",
+        message: "Doctor account created successfully",
         data: result
     })
 });
@@ -35,9 +34,9 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
 
     const result = await UserService.createPatient(req);
     sendResponse(res, {
-        statusCode: httpStatus.OK,
+        statusCode: httpStatus.CREATED,
         success: true,
-        message: "Doctor Created successfuly!",
+        message: "Patient account created successfully",
         data: result
     })
 });
@@ -48,11 +47,10 @@ const getAllUserFromDB = catchAsync(async (req: Request, res: Response) => {
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
     const result = await UserService.getAllUserFromDB(filters, options);
 
-
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Users fetched successfully",
+        message: "Users retrieved successfully",
         meta: result.meta,
         data: result.data,
     });
@@ -61,14 +59,12 @@ const getAllUserFromDB = catchAsync(async (req: Request, res: Response) => {
 const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
 
     const { id } = req.params
-
     const result = await UserService.changeProfileStatus(id, req.body);
-
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "change Profile Status successfully",
+        message: "Profile status changed successfully",
         data: result
     });
 });
@@ -76,21 +72,19 @@ const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
 const getMyProfile = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
 
     const user = req.user
-
     const result = await UserService.getMyProfile(user as IAuthUser);
-
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "change Profile Status successfully",
+        message: "User profile retrieved successfully",
         data: result
     });
 });
 
-const updateMyProfile = catchAsync(async (req: Request& { user?: IAuthUser }, res: Response) => {
-    const user = req.user;
+const updateMyProfile = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
 
+    const user = req.user;
     const result = await UserService.updateMyProfile(user as IAuthUser, req);
 
     sendResponse(res, {
@@ -100,7 +94,6 @@ const updateMyProfile = catchAsync(async (req: Request& { user?: IAuthUser }, re
         data: result,
     });
 });
-
 
 export const UserController = {
     createAdmin,

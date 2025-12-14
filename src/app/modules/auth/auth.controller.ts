@@ -19,7 +19,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "login in successfully",
+        message: "Login successful", // পরিবর্তন করা হয়েছে
         data: {
             accessToken: result.accessToken,
             needPasswordChange: result.needPasswordChange
@@ -37,7 +37,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "refresh token genarted in successfully",
+        message: "Access token refreshed",
         data: result,
 
     })
@@ -52,7 +52,7 @@ const changePassword = catchAsync(async (req: Request & { user?: any }, res: Res
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "password is changed successfully",
+        message: "Password updated successfully",
         data: result,
 
     })
@@ -66,7 +66,7 @@ const forgetPassword = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "password is recover successfully",
+        message: "Password reset instructions sent",
         data: result,
 
     })
@@ -76,13 +76,13 @@ const forgetPassword = catchAsync(async (req: Request, res: Response) => {
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
     const token = req.headers.authorization || ""
-    
+
     const result = await AuthServices.resetPassword(token, req.body)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "password reset successfully",
+        message: "Password successfully reset",
         data: result,
 
     })
