@@ -2,6 +2,7 @@ model PatientHealthData {
     id                  String        @id @default(ulid())
     patientId           String        @unique
     patient             Patient       @relation(fields: [patientId], references: [id])
+
     dateOfBirth         DateTime
     gender              Gender
     bloodGroup          BloodGroup
@@ -28,6 +29,7 @@ model MedicalReport {
     id         String   @id @default(uuid())
     patientId  String
     patient    Patient  @relation(fields: [patientId], references: [id])
+    
     reportName String
     reportLink String
     createdAt  DateTime @default(now())
