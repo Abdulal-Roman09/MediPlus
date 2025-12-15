@@ -1,7 +1,9 @@
-import { addHours, addMinutes, format, setHours, setMinutes } from "date-fns";
+import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
+import { ISchedule } from "./schedule.interface";
+import { Schedule } from "@prisma/client";
 
-const insertIntoDB = async (payload: any) => {
+const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
     const { startDate, endDate, startTime, endTime } = payload;
     console.log(payload)
     const interverlTime = 30;
