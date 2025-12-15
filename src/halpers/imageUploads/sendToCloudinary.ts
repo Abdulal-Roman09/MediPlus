@@ -18,5 +18,4 @@ const sendToCloudinary = async (file: IUploadedFile): Promise<ICloudinaryRespons
     })
 }
 
-
 export default sendToCloudinary

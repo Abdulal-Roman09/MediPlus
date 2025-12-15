@@ -1,11 +1,11 @@
 import prisma from "../../../shared/prisma";
-import { Prisma, UserStatus } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { doctorSearchableFields } from "./doctor.constants";
 import { IDoctorFilterRequest } from "./doctor.interface";
 
-const getAllDoctorFromDB = async (params: IDoctorFilterRequest, options: IPaginationOptions) => {
+const getAllDoctorFromDB = async (params: IDoctorFilterRequest, options: IPaginationOptions): Promise<Doctor | null> => {
     const { skip, limit, page, sortBy, sortOrder } = calculatePagination(options);
 
     const { searchTerm, specialties, ...filterData } = params;
@@ -90,7 +90,7 @@ const getAllDoctorFromDB = async (params: IDoctorFilterRequest, options: IPagina
     };
 };
 
-const getSingleDoctrFromDB = async (id: string) => {
+const getSingleDoctrFromDB = async (id: string): Promise<Doctor | null> => {
 
     return await prisma.doctor.findUnique({
         where: {
@@ -100,7 +100,7 @@ const getSingleDoctrFromDB = async (id: string) => {
 
 }
 
-const updateDoctorFromDB = async (id: string, payload: any) => {
+const updateDoctorFromDB = async (id: string, payload: any): Promise<Doctor | null> => {
     const { specialties, ...doctorData } = payload;
 
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({
@@ -159,7 +159,7 @@ const updateDoctorFromDB = async (id: string, payload: any) => {
     return result;
 };
 
-const deleteDoctrFromDB = async (id: string) => {
+const deleteDoctrFromDB = async (id: string): Promise<Doctor | null> => {
     return await prisma.$transaction(async transactionClient => {
 
         const deleteDoctor = await transactionClient.doctor.delete({
@@ -177,7 +177,7 @@ const deleteDoctrFromDB = async (id: string) => {
     })
 }
 
-const softDoctrFromDB = async (id: string, status: UserStatus) => {
+const softDoctrFromDB = async (id: string, status: UserStatus): Promise<Doctor | null> => {
 
     return await prisma.$transaction(async transactionClient => {
 

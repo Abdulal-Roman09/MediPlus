@@ -6,7 +6,6 @@ import { SpecialtiesRoutes } from '../modules/Specialties/specialties.route';
 import { DoctorRoutes } from '../modules/Doctor/doctor.routes';
 import { PatientRoutes } from '../modules/Patient/patient.routes';
 
-
 const router = express.Router();
 
 const moduleRoutes = [

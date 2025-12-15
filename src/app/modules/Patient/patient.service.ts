@@ -2,9 +2,10 @@ import prisma from "../../../shared/prisma";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { patientSearchAbleFields } from "./patient.contance";
-import { Prisma, UserStatus } from "@prisma/client";
+import { Patient, Prisma, UserStatus } from "@prisma/client";
+import { IPatientFilterRequest, IPatientUpdate } from "./patient.interface";
 
-const getAllPatientFromDB = async (params: any, options: IPaginationOptions) => {
+const getAllPatientFromDB = async (params: IPatientFilterRequest, options: IPaginationOptions): Promise<Patient | null> => {
 
     const { skip, limit, page, } = calculatePagination(options);
     const { searchTerm, ...filterData } = params;
@@ -71,7 +72,7 @@ const getAllPatientFromDB = async (params: any, options: IPaginationOptions) => 
     };
 };
 
-const getSinglePatientFromDB = async (id: string) => {
+const getSinglePatientFromDB = async (id: string): Promise<Patient | null> => {
     const result = await prisma.patient.findUnique({
         where: {
             id,
@@ -85,7 +86,7 @@ const getSinglePatientFromDB = async (id: string) => {
     return result
 }
 
-const updatePatientFromDB = async (id: string, payload: any) => {
+const updatePatientFromDB = async (id: string, payload: Partial<IPatientUpdate>): Promise<Patient | null> => {
     const { patientHealthData, medicalReport, ...patientData } = payload
     const patientInfo = await prisma.patient.findUniqueOrThrow({
         where: { id, isDeleted: false }
@@ -128,7 +129,7 @@ const updatePatientFromDB = async (id: string, payload: any) => {
     return ResponseData
 }
 
-const deletePatientFromDB = async (id: string) => {
+const deletePatientFromDB = async (id: string): Promise<Patient | null> => {
 
     const result = await prisma.$transaction(async tx => {
         // delete medical report
@@ -153,7 +154,7 @@ const deletePatientFromDB = async (id: string) => {
 
 }
 
-const softDeletePatientFromDB = async (id: string) => {
+const softDeletePatientFromDB = async (id: string): Promise<Patient | null> => {
     return await prisma.$transaction(async tx => {
         // update in patient
         const deletePatient = await tx.patient.update({

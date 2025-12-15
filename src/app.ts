@@ -14,7 +14,7 @@ app.use('/api/v1/', router)
 
 // main routes
 app.get('/', (req, res) => {
-  res.send('Hello from app.ts!');
+  res.send('  🌿 API Service is running smoothly!');
 });
 
 app.use(globalErrorHandler)
@@ -22,7 +22,7 @@ app.use(globalErrorHandler)
 app.use((req, res, next) => {
   res.status(httpStatus.NOT_FOUND).json({
     success: false,
-    message: 'Route not found',
+    message: 'API endpoint not found',
     error: {
       path: req.originalUrl,
       method: req.method,
