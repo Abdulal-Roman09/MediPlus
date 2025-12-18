@@ -11,6 +11,11 @@ router.get(
     ScheduleController.getAllSchedulFromDB,
     auth(UserRole.DOCTOR),
 )
+router.get(
+    '/:id',
+    ScheduleController.getScheduByIdFromDB,
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+)
 
 router.post(
     '/',

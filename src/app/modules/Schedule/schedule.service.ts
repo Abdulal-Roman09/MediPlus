@@ -146,7 +146,15 @@ const getAllSchedulFromDB = async (user: IAuthUser, filters: any, options: any) 
     };
 }
 
+const getSchedulByIdFromDB = async (id: string) => {
+    const result = await prisma.schedule.findUnique({
+        where: { id }
+    })
+    return result
+}
+
 export const ScheduleServices = {
     insertIntoDB,
-    getAllSchedulFromDB
+    getAllSchedulFromDB,
+    getSchedulByIdFromDB
 };

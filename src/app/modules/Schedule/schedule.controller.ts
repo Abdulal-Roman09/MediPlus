@@ -32,8 +32,21 @@ const getAllSchedulFromDB = catchAsync(async (req: Request & { user?: IAuthUser 
         data: result.data,
     });
 });
+const getScheduByIdFromDB = catchAsync(async (req: Request , res: Response) => {
+
+    const {id} = req.params
+    const result = await ScheduleServices.getSchedulByIdFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Doctors retrieved successfully",
+        data: result
+    });
+});
 
 export const ScheduleController = {
     insertIntoDB,
-    getAllSchedulFromDB
+    getAllSchedulFromDB,
+    getScheduByIdFromDB
 };
