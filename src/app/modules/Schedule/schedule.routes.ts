@@ -6,6 +6,12 @@ import { ScheduleController } from './schedule.controller';
 const router = express.Router();
 
 
+router.get(
+    '/',
+    ScheduleController.getAllSchedulFromDB,
+    auth(UserRole.DOCTOR),
+)
+
 router.post(
     '/',
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),

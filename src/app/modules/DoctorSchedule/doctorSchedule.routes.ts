@@ -13,4 +13,6 @@ router.post(
     DoctorScheduleController.insertIntoDB
 )
 
+
+
 export const DoctorScheduleRoutes = router;
