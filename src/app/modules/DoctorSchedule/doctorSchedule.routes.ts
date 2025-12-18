@@ -13,6 +13,16 @@ router.post(
     DoctorScheduleController.insertIntoDB
 )
 
+router.get(
+    '/my-schedule',
+    auth(UserRole.DOCTOR),
+    DoctorScheduleController.getMySchedulFromDB
+)
 
+router.get(
+    '/my-schedule/:id',
+    auth(UserRole.DOCTOR),
+    DoctorScheduleController.deleteMySchedulByIdFromDB
+)
 
 export const DoctorScheduleRoutes = router;

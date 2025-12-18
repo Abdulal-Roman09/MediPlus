@@ -1,0 +1,1 @@
+export const DoctorScheduleSearchableFields: string[] = ['startDate', 'endDate','isBooked']
