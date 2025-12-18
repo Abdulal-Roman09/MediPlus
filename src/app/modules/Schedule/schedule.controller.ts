@@ -13,7 +13,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Scedule created successfully",
+        message: "Schedule created successfully",
         data: result,
     });
 });
@@ -21,26 +21,39 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
 const getAllSchedulFromDB = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const filters = pick(req.query, scheduleSearchableFields);
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const user = req.user
+    const user = req.user;
+
     const result = await ScheduleServices.getAllSchedulFromDB(user as IAuthUser, filters, options);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctors retrieved successfully",
+        message: "Schedules retrieved successfully",
         meta: result.meta,
         data: result.data,
     });
 });
-const getScheduByIdFromDB = catchAsync(async (req: Request , res: Response) => {
 
-    const {id} = req.params
+const getScheduByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
     const result = await ScheduleServices.getSchedulByIdFromDB(id);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctors retrieved successfully",
+        message: "Schedule retrieved successfully",
+        data: result
+    });
+});
+
+const deleteSchedulByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await ScheduleServices.deleteSchedulByIdFromDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Schedule deleted successfully",
         data: result
     });
 });
@@ -48,5 +61,6 @@ const getScheduByIdFromDB = catchAsync(async (req: Request , res: Response) => {
 export const ScheduleController = {
     insertIntoDB,
     getAllSchedulFromDB,
-    getScheduByIdFromDB
+    getScheduByIdFromDB,
+    deleteSchedulByIdFromDB
 };

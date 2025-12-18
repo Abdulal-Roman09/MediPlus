@@ -5,15 +5,21 @@ import { ScheduleController } from './schedule.controller';
 
 const router = express.Router();
 
-
 router.get(
     '/',
     ScheduleController.getAllSchedulFromDB,
     auth(UserRole.DOCTOR),
 )
+
 router.get(
     '/:id',
     ScheduleController.getScheduByIdFromDB,
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+)
+
+router.delete(
+    '/:id',
+    ScheduleController.deleteSchedulByIdFromDB,
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
 )
 
