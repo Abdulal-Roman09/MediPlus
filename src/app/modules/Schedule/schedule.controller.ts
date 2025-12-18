@@ -13,7 +13,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Schedule created successfully",
+        message: "Scedule created successfully",
         data: result,
     });
 });
@@ -21,39 +21,39 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
 const getAllSchedulFromDB = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const filters = pick(req.query, scheduleSearchableFields);
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const user = req.user;
-
+    const user = req.user
     const result = await ScheduleServices.getAllSchedulFromDB(user as IAuthUser, filters, options);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Schedules retrieved successfully",
+        message: "Doctors retrieved successfully",
         meta: result.meta,
         data: result.data,
     });
 });
 
-const getScheduByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
+const getScheduByIdFromDB = catchAsync(async (req: Request , res: Response) => {
+
+    const {id} = req.params
     const result = await ScheduleServices.getSchedulByIdFromDB(id);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Schedule retrieved successfully",
+        message: "Doctors retrieved successfully",
         data: result
     });
 });
 
-const deleteSchedulByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params;
+const deleteSchedulByIdFromDB = catchAsync(async (req: Request , res: Response) => {
+    const {id} = req.params
     const result = await ScheduleServices.deleteSchedulByIdFromDB(id);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Schedule deleted successfully",
+        message: "Doctors Data delete successfully",
         data: result
     });
 });

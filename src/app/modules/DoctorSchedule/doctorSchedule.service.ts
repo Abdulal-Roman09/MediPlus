@@ -26,30 +26,30 @@ const insertIntoDB = async (user: any, payload: { specialtysIds: string[] }) => 
 const getAllSchedulFromDB = async (filters: any, options: any) => {
 
     const { skip, limit, page } = calculatePagination(options);
-    const { startDate, endDate, ...filterData } = filters
+    const { serchTerm, ...filterData } = filters
 
-    const andConditions: Prisma.ScheduleWhereInput[] = []
+    const andConditions: Prisma.DoctorSchedulesWhereInput[] = []
 
-    if (startDate && endDate) {
+    if (serchTerm) {
         andConditions.push({
-            AND: [
-                {
-                    startDateTime: {
-                        gte: startDate
-                    }
-                },
-                {
-                    endDateTime: {
-                        lte: endDate
-                    }
-
+            doctor: {
+                name: {
+                    contains: serchTerm,
+                    mode: "insensitive"
                 }
-            ]
+            }
         })
     }
 
     // DIRECT FIELD FILTERING
     if (Object.keys(filterData).length > 0) {
+
+        if (typeof filterData.isBooked === 'string' && filterData.isBooked === 'true') {
+            filterData.isBooked = true;
+        } else if (typeof filterData.isBooked === 'string' && filterData.isBooked === 'false') {
+            filterData.isBooked = false;
+        }
+
         andConditions.push({
             AND: Object.keys(filterData).map((key) => ({
                 [key]: {
@@ -60,9 +60,8 @@ const getAllSchedulFromDB = async (filters: any, options: any) => {
     }
 
     // FINAL WHERE CONDITION
-    const whereCondition: Prisma.ScheduleWhereInput =
+    const whereCondition: Prisma.DoctorSchedulesWhereInput =
         andConditions.length > 0 ? { AND: andConditions } : {};
-
 
     // QUERY
     const result = await prisma.doctorSchedules.findMany({
@@ -205,6 +204,7 @@ const deleteMySchedulByIdFromDB = async (id: string, user: IAuthUser) => {
 export const DoctorScheduleServices = {
     insertIntoDB,
     getMySchedulFromDB,
+    getAllSchedulFromDB,
     deleteMySchedulByIdFromDB
 
 };
