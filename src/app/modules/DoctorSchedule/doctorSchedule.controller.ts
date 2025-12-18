@@ -36,14 +36,16 @@ const getMySchedulFromDB = catchAsync(async (req: Request & { user?: IAuthUser }
     });
 });
 
-const deleteMySchedulByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+
+const deleteMySchedulByIdFromDB = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const { id } = req.params;
-    const result = await DoctorScheduleServices.deleteSchedulByIdFromDB(id);
+    const user = req.user
+    const result = await DoctorScheduleServices.deleteMySchedulByIdFromDB(id, user as IAuthUser);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Schedule deleted successfully",
+        message: " doctor Schedule deleted successfully",
         data: result
     });
 });

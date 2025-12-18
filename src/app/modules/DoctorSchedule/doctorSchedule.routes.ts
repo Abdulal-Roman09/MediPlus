@@ -19,7 +19,7 @@ router.get(
     DoctorScheduleController.getMySchedulFromDB
 )
 
-router.get(
+router.delete(
     '/my-schedule/:id',
     auth(UserRole.DOCTOR),
     DoctorScheduleController.deleteMySchedulByIdFromDB
