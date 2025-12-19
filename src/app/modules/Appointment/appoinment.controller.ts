@@ -19,8 +19,23 @@ const createAppoinment = catchAsync(async (req: Request & { user?: IAuthUser }, 
     });
 });
 
+const getAllAppoinmentFromDB = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user
+    const filters = pick(req.body, ['status', 'paymentStatus'])
+    const options = pick(req.body, ['limit', 'page', 'sortBy', 'sortOrder'])
+    const result = await AppoinmentServices.getAllAppoinmentFromDB(user as IAuthUser, filters, options);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Appoinment fatched successfully",
+        data: result,
+    });
+});
+
 
 export const AppoinmentController = {
-    createAppoinment
+    createAppoinment,
+    getAllAppoinmentFromDB
 
 };

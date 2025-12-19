@@ -6,12 +6,18 @@ import { AppoinmentController } from './appoinment.controller';
 
 const router = express.Router();
 
+router.get(
+    '/',
+    auth(UserRole.DOCTOR, UserRole.PATIENT),
+    AppoinmentController.getAllAppoinmentFromDB
+)
 
 router.post(
     '/',
     auth(UserRole.DOCTOR, UserRole.PATIENT),
     AppoinmentController.createAppoinment
 )
+
 
 
 export const AppoinmentRoutes = router;
