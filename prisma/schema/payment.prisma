@@ -1,0 +1,13 @@
+model Payment {
+    id String @id @default(uuid())
+
+    appointtmentId String      @unique
+    appointtment   Appointment @relation(fields: [appointtmentId], references: [id])
+
+    amount             Float
+    transactionId      String
+    status             PaymentStatus
+    paymentGatewayData Json
+    createdAt          DateTime      @default(now())
+    updatedAt          DateTime      @updatedAt
+}
