@@ -34,3 +34,15 @@ enum MaritalStatus {
   WIDOWED
   SEPARATED
 }
+
+enum AppointmentStatus {
+  SCHEDULED
+  INPROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+}

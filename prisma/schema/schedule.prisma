@@ -6,6 +6,7 @@ model Schedule {
     updatedAt     DateTime @updatedAt
 
     doctorSchedules DoctorSchedules[]
+    appointment     Appointment?
 }
 
 model DoctorSchedules {

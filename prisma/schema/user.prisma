@@ -30,6 +30,25 @@ model Admin {
   @@map("admins")
 }
 
+model Patient {
+  id            String   @id @unique @default(uuid())
+  email         String   @unique
+  name          String
+  profilePhoto  String?
+  contactNumber String?
+  address       String?
+  isDeleted     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user              User               @relation(references: [email], fields: [email])
+  patientHealthData PatientHealthData?
+  medicalReports    MedicalReport[]
+  appointments      Appointment[]
+
+  @@map("patients")
+}
+
 model Doctor {
   id                  String   @id @default(uuid())
   name                String
@@ -51,24 +70,7 @@ model Doctor {
   user              User              @relation(fields: [email], references: [email])
   doctorSpecialties DoctorSpecialty[]
   doctorSchedules   DoctorSchedules[]
+  appointments      Appointment[]
 
   @@map("doctors")
-}
-
-model Patient {
-  id            String   @id @unique @default(uuid())
-  email         String   @unique
-  name          String
-  profilePhoto  String?
-  contactNumber String?
-  address       String?
-  isDeleted     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user              User               @relation(references: [email], fields: [email])
-  patientHealthData PatientHealthData?
-  medicalReports    MedicalReport[]
-
-  @@map("patients")
 }
