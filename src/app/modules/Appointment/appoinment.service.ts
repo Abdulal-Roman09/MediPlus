@@ -7,7 +7,6 @@ import httpStatus from "http-status";
 import { v4 as uuidv4 } from 'uuid';
 
 
-
 const createAppoinment = async (user: IAuthUser, payload: any) => {
 
     const patientData = await prisma.patient.findFirstOrThrow({
@@ -22,13 +21,18 @@ const createAppoinment = async (user: IAuthUser, payload: any) => {
         }
     })
 
-    const isBookedSchedule = await prisma.doctorSchedules.findFirstOrThrow({
+    const isBookedSchedule = await prisma.doctorSchedules.findFirst({
         where: {
             doctorId: doctorData.id,
             scheduleId: payload.scheduleId,
             isBooked: false
         }
     })
+
+    if (!isBookedSchedule) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Schedule already booked");
+    }
+
     const videoCallingId: string = uuidv4();
 
     const result = await prisma.$transaction(async (tx) => {
@@ -64,8 +68,16 @@ const createAppoinment = async (user: IAuthUser, payload: any) => {
         const transactionId = "Medicare-" + today.getFullYear() + "-" + today.getMonth() + "-"
             + today.getDay() + "-" + today.getHours() + "-" + today.getMinutes();
 
+        await tx.payment.create({
+            data: {
+                appointmentId: appoinmentData.id,
+                amount: doctorData.appointmentFee,
+                transactionId
+            }
+        })
+        return appoinmentData
     })
-return result
+    return result
 
 };
 
