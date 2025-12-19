@@ -5,6 +5,7 @@ import catchAsync from "../../../shared/catchAsync";
 import { IAuthUser } from "../../interfaces/common";
 import { pick } from "../../../shared/pick";
 import { AppoinmentServices } from "./appoinment.service";
+import { appointmentFilterableFields } from "./appoinment.contanct";
 
 
 const createAppoinment = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -15,6 +16,20 @@ const createAppoinment = catchAsync(async (req: Request & { user?: IAuthUser }, 
         statusCode: httpStatus.OK,
         success: true,
         message: " Appoinment created successfully",
+        data: result,
+    });
+});
+
+const getMyAppoinmentFromDB = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user
+    const filters = pick(req.body, appointmentFilterableFields)
+    const options = pick(req.body, ['limit', 'page', 'sortBy', 'sortOrder'])
+    const result = await AppoinmentServices.getAllAppoinmentFromDB(user as IAuthUser, filters, options);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Appoinment fatched successfully",
         data: result,
     });
 });
@@ -36,6 +51,7 @@ const getAllAppoinmentFromDB = catchAsync(async (req: Request & { user?: IAuthUs
 
 export const AppoinmentController = {
     createAppoinment,
-    getAllAppoinmentFromDB
+    getAllAppoinmentFromDB,
+    getMyAppoinmentFromDB
 
 };
