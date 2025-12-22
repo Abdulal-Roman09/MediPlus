@@ -31,7 +31,7 @@ const patientCount = async (user: IAuthUser, period: number) => {
             },
         });
 
-        // Calculate unique patients using Set
+       // Calculate unique patients using Set
         const uniquePatients = new Set(appointments.map((app) => app.patientId));
         return { thisMonth: uniquePatients.size };
     }
@@ -56,7 +56,7 @@ const patientCount = async (user: IAuthUser, period: number) => {
         });
 
         const monthlyData = new Map<string, Set<string>>();
-
+ 
         appointments.forEach((app) => {
             const monthKey = format(app.createdAt, 'yyyy-MM');
             if (!monthlyData.has(monthKey)) {

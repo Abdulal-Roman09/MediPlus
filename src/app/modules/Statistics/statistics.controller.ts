@@ -8,7 +8,6 @@ import { IAuthUser } from "../../interfaces/common";
 
 const patientCount = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user as IAuthUser
-    // period take data from query params
     const period = parseInt(req.query.period as string) || 1
     const result = await StatisticsServices.patientCount(user, period);
 

@@ -19,7 +19,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Login successful", // পরিবর্তন করা হয়েছে
+        message: "Login successful",
         data: {
             accessToken: result.accessToken,
             needPasswordChange: result.needPasswordChange
