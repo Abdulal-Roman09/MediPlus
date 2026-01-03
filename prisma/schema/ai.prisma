@@ -1,0 +1,6 @@
+model AiQuestion {
+    id        String   @id @default(uuid())
+    question  String
+    answer    String
+    createdAt DateTime @default(now())
+}
