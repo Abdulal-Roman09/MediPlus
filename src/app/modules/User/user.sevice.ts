@@ -201,7 +201,7 @@ const changeProfileStatus = async (id: string, payload: { status: UserStatus }) 
 }
 
 const getMyProfile = async (payload: IAuthUser) => {
-
+    console.log(payload)
     const userData = await prisma.user.findFirstOrThrow({
         where: {
             email: payload?.email

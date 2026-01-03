@@ -5,6 +5,7 @@ export type IUserLogin = {
     password: string
 }
 export type JwtPayloadData = {
+    id:string,
     email: string;
     role: string
 }

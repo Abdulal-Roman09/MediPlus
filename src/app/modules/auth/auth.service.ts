@@ -18,7 +18,6 @@ const loginUser = async (payload: IUserLogin) => {
             status: UserStatus.ACTIVE
         },
     });
-
     const isCorrectPassword = await bcrypt.compare(
         payload.password,
         userData.password
@@ -28,10 +27,21 @@ const loginUser = async (payload: IUserLogin) => {
         throw new Error("Invalid email or password");
     }
 
-    const accessToken = generateToken({ email: userData.email, role: userData.role },
+    const accessToken = generateToken(
+        {
+            email: userData.email,
+            role: userData.role,
+            id: userData.id
+
+        },
         config.jwt.secret, config.jwt.expiresIn);
 
-    const refreshToken = generateToken({ email: userData.email, role: userData.role },
+    const refreshToken = generateToken(
+        {
+            email: userData.email,
+            role: userData.role,
+            id: userData.id
+        },
         config.refreshToken.secret, config.refreshToken.expiresIn);
 
     return {
@@ -55,7 +65,12 @@ const refreshToken = async (token: string) => {
             status: UserStatus.ACTIVE
         }
     })
-    const accessToken = generateToken({ email: userData.email, role: userData.role },
+    const accessToken = generateToken(
+        {
+            email: userData.email,
+            role: userData.role,
+            id: userData.id
+        },
         config.jwt.secret, config.jwt.expiresIn);
     return {
         accessToken,
@@ -109,7 +124,8 @@ const forgetPassword = async (payload: { email: string }) => {
     const resetPassToken = generateToken(
         {
             email: userData.email,
-            role: userData.role
+            role: userData.role,
+            id: userData.id
         },
         config.resetPassToken.secret,
         config.resetPassToken.expiresIn

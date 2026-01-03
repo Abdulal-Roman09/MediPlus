@@ -3,14 +3,20 @@ import router from './app/routes';
 import globalErrorHandler from './app/middleWares/globalErrorHandler.ts';
 import httpStatus from 'http-status'
 import cookiParser from 'cookie-parser'
+import cors from 'cors'
 
 const app: Application = express();
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(cookiParser())
 
 // all routes
 app.use('/api/v1/', router)
+
 
 // main routes
 app.get('/', (req, res) => {

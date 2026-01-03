@@ -1,7 +1,7 @@
 model Specialties {
-  id    String @id @default(ulid())
+  id    String  @id @default(ulid())
   title String
-  icon  String
+  file  String
 
   doctorSpecialties DoctorSpecialty[]
 

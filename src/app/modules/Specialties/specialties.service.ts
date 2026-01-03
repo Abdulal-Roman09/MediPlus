@@ -6,14 +6,19 @@ import { Specialties } from "@prisma/client";
 
 
 const SpecialtiesinsertIntoDB = async (req: Request & { file: IUploadedFile }) => {
-
     const file = req.file as IUploadedFile
+    let fileUrl = "";
     if (file) {
         const uploadToCloundary = await sendToCloudinary(file)
-        req.body.icon = uploadToCloundary?.secure_url
+        if (uploadToCloundary?.secure_url) {
+            fileUrl = uploadToCloundary?.secure_url;
+        }
     }
     const result = await prisma.specialties.create({
-        data: req.body
+        data: {
+            title: req.body.title,
+            file: fileUrl
+        }
     })
     return result
 }
@@ -37,7 +42,6 @@ const deleteSpecialties = async (id: string) => {
     })
     return result
 }
-
 
 
 export const SpecialtiesServices = {

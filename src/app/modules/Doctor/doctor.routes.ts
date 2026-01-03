@@ -4,18 +4,17 @@ import { UserRole } from '@prisma/client';
 import { DoctorController } from './doctor.controller';
 
 
-
 const router = express.Router();
 
 router.get(
     "/",
-    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    // auth(UserRole.ADMIN, UserRole.SUPER_ADMIN,UserRole.DOCTOR),
     DoctorController.getAllDoctor
 );
 
 router.get(
     "/:id",
-    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN,UserRole.DOCTOR),
     DoctorController.getSingleDoctrFromDB
 );
 
@@ -30,12 +29,11 @@ router.delete(
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     DoctorController.deleteDoctrFromDB
 );
+
 router.delete(
     "/:id/soft-delete",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     DoctorController.deleteDoctrFromDB
 );
-
-
 
 export const DoctorRoutes = router;
