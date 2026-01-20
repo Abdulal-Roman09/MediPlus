@@ -4,6 +4,9 @@ import { calculatePagination } from "../../../halpers/paginationAndSoringHalper"
 import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { doctorSearchableFields } from "./doctor.constants";
 import { IDoctorFilterRequest, IDoctorUpdate } from "./doctor.interface";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
+import { openRouter } from "../../../halpers/openRouter";
 
 const getAllDoctorFromDB = async (filter: IDoctorFilterRequest, options: IPaginationOptions): Promise<Doctor | null> => {
     const { skip, limit, page } = calculatePagination(options);
@@ -207,10 +210,63 @@ const softDoctrFromDB = async (id: string, status: UserStatus): Promise<Doctor |
     })
 }
 
+const aiSuggestion = async (payload: { symptom: string }) => {
+    if (!(payload && payload.symptom)) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Symptom is Required");
+    }
+
+    // Fetch doctors from database
+    const doctors = await prisma.doctor.findMany({
+        where: { isDeleted: false },
+        include: { doctorSpecialties: true }
+    })
+
+    // Simple and direct prompt
+    const prompt = `
+    You are a professional Medical Assistant AI.
+     Your task is to analyze user symptoms and
+     match them with the most relevant doctor
+      specialties from the provided list
+    Symptom: "${payload.symptom}"
+    Task: Recommend suitable doctors. 
+    Return ONLY a JSON object with full doctor data list in json:
+    ${JSON.stringify(doctors, null, 2)}
+    `;
+
+    const completion = await openRouter.chat.send({
+        model: 'mistralai/devstral-2512:free',
+        messages: [
+            {
+                role: "system",
+                content: "You are a medical assistant. Reply only in JSON."
+            },
+            {
+                role: 'user',
+                content: prompt
+            },
+        ],
+        stream: false,
+    });
+
+    const rawContent = completion.choices[0].message.content;
+
+    const cleanedContent = rawContent
+        .replace(/```json/i, "")
+        .replace(/```/g, "")
+        .trim();
+
+    const parsedDoctors = JSON.parse(cleanedContent);
+
+    return parsedDoctors;
+
+
+};
+
 export const DoctorService = {
     getAllDoctorFromDB,
     getSingleDoctrFromDB,
     updateDoctorFromDB,
     deleteDoctrFromDB,
-    softDoctrFromDB
+    softDoctrFromDB,
+    aiSuggestion
 };

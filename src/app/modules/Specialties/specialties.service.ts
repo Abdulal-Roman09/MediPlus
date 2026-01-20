@@ -6,6 +6,7 @@ import { Specialties } from "@prisma/client";
 
 
 const SpecialtiesinsertIntoDB = async (req: Request & { file: IUploadedFile }) => {
+    console.log(req.body.title)
     const file = req.file as IUploadedFile
     let fileUrl = "";
     if (file) {

@@ -7,7 +7,6 @@ import { IAuthUser } from "../../interfaces/common";
 
 const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
     const { startDate, endDate, startTime, endTime } = payload;
-    console.log(payload)
     const interverlTime = 30;
     const schedules = [];
 
@@ -42,7 +41,6 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
                 startDateTime,
                 endDateTime: addMinutes(startDateTime, interverlTime)
             }
-            console.log(scheduleDate)
             const existingSchedule = await prisma.schedule.findFirst({
                 where: {
                     startDateTime: scheduleDate.startDateTime,

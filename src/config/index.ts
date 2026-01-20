@@ -33,8 +33,9 @@ export default {
     },
 
     databaseUrl: process.env.DATABASE_URL as string,
-    
+
     ai: {
-        gemini_ai: process.env.Gimini_API_KEY
+        gemini_ai: process.env.Gimini_API_KEY,
+        open_router: process.env.OPENROUTER_API_KEY
     }
 }

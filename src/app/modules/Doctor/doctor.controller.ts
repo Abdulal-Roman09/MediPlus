@@ -13,11 +13,10 @@ const getAllDoctor = catchAsync(async (req: Request, res: Response) => {
 
     const result = await DoctorService.getAllDoctorFromDB(filters, options);
 
-
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctors retrieved successfully", 
+        message: "Doctors retrieved successfully",
         meta: result.meta,
         data: result.data,
     });
@@ -31,7 +30,7 @@ const getSingleDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctor retrieved successfully", 
+        message: "Doctor retrieved successfully",
         data: result
     });
 });
@@ -44,7 +43,7 @@ const updateDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctor updated successfully", 
+        message: "Doctor updated successfully",
         data: result
     });
 });
@@ -58,7 +57,7 @@ const deleteDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctor deleted successfully", 
+        message: "Doctor deleted successfully",
         data: result
     });
 });
@@ -71,8 +70,19 @@ const softDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Doctor soft deleted successfully", 
+        message: "Doctor soft deleted successfully",
         data: result
+    });
+});
+
+const aiSuggestion = catchAsync(async (req: Request, res: Response) => {
+    const result = await DoctorService.aiSuggestion(req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Doctor AI suggestions retrieved successfully",
+        data: result,
     });
 });
 
@@ -82,6 +92,7 @@ export const DoctorController = {
     getSingleDoctrFromDB,
     updateDoctrFromDB,
     deleteDoctrFromDB,
-    softDoctrFromDB
+    softDoctrFromDB,
+    aiSuggestion
 
 };

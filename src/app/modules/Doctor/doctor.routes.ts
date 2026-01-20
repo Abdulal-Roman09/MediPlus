@@ -36,4 +36,10 @@ router.delete(
     DoctorController.deleteDoctrFromDB
 );
 
+router.post(
+  "/suggestion",
+  DoctorController.aiSuggestion
+);
+
+
 export const DoctorRoutes = router;
