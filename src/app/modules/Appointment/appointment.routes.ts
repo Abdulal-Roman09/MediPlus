@@ -1,8 +1,7 @@
 import express from 'express';
-import { UserRole } from '@prisma/client';
 import auth from '../../middleWares/auth';
+import { UserRole } from '@prisma/client';
 import { AppoinmentController } from './appoinment.controller';
-
 
 const router = express.Router();
 
@@ -20,10 +19,9 @@ router.get(
 
 router.post(
     '/',
-    auth(UserRole.DOCTOR, UserRole.PATIENT),
+    auth(UserRole.PATIENT),
     AppoinmentController.createAppoinment
 )
-
 
 
 export const AppoinmentRoutes = router;

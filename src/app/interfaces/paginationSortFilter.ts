@@ -1,6 +1,8 @@
-export type IPaginationOptions = {
-    page?: number;
-    limit?: number;
-    sortBy?: string | undefined;
-    sortOrder?: string | undefined;
-}
+export type IGenericResponse<T> = {
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  data: T;
+};

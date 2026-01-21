@@ -5,94 +5,91 @@ import { pick } from "../../../shared/pick";
 import catchAsync from "../../../shared/catchAsync";
 import { doctorFilterableFields } from "./doctor.constants";
 import { DoctorService } from "./doctor.service";
-
+import { UserStatus } from "@prisma/client";
 
 const getAllDoctor = catchAsync(async (req: Request, res: Response) => {
-    const filters = pick(req.query, doctorFilterableFields);
-    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const filters = pick(req.query, doctorFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-    const result = await DoctorService.getAllDoctorFromDB(filters, options);
+  const result = await DoctorService.getAllDoctorFromDB(filters, options);
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctors retrieved successfully",
-        meta: result.meta,
-        data: result.data,
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctors retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
 });
 
-const getSingleDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
+const getSingleDoctor = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DoctorService.getSingleDoctorFromDB(id);
 
-    const { id } = req.params
-    const result = await DoctorService.getSingleDoctrFromDB(id);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor retrieved successfully",
-        data: result
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor retrieved successfully",
+    data: result,
+  });
 });
 
-const updateDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
+const updateDoctor = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DoctorService.updateDoctorFromDB(id, req.body);
 
-    const { id } = req.params
-    const result = await DoctorService.updateDoctorFromDB(id, req.body);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor updated successfully",
-        data: result
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor updated successfully",
+    data: result,
+  });
 });
 
+const deleteDoctor = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DoctorService.deleteDoctorFromDB(id);
 
-const deleteDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
-
-    const { id } = req.params
-    const result = await DoctorService.deleteDoctrFromDB(id);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor deleted successfully",
-        data: result
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor deleted successfully",
+    data: result,
+  });
 });
 
-const softDoctrFromDB = catchAsync(async (req: Request, res: Response) => {
+const softDeleteDoctor = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const { id } = req.params
-    const result = await DoctorService.getSingleDoctrFromDB(id);
+  const result = await DoctorService.softDeleteDoctorFromDB(
+    id,
+    UserStatus.DELETED
+  );
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor soft deleted successfully",
-        data: result
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor soft deleted successfully",
+    data: result,
+  });
 });
 
 const aiSuggestion = catchAsync(async (req: Request, res: Response) => {
-    const result = await DoctorService.aiSuggestion(req.body);
+  const result = await DoctorService.aiSuggestion(req.body);
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Doctor AI suggestions retrieved successfully",
-        data: result,
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor AI suggestions retrieved successfully",
+    data: result,
+  });
 });
 
-
 export const DoctorController = {
-    getAllDoctor,
-    getSingleDoctrFromDB,
-    updateDoctrFromDB,
-    deleteDoctrFromDB,
-    softDoctrFromDB,
-    aiSuggestion
-
+  getAllDoctor,
+  getSingleDoctor,
+  updateDoctor,
+  deleteDoctor,
+  softDeleteDoctor,
+  aiSuggestion,
 };

@@ -17,7 +17,8 @@ const createAppoinment = async (user: IAuthUser, payload: any) => {
 
     const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
-            id: payload.doctorId
+            id: payload.doctorId,
+            isDeleted: false
         }
     })
 
@@ -65,8 +66,8 @@ const createAppoinment = async (user: IAuthUser, payload: any) => {
         })
         // payment
         const today = new Date()
-        const transactionId = "Medicare-" + today.getFullYear() + "-" + today.getMonth() + "-"
-            + today.getDay() + "-" + today.getHours() + "-" + today.getMinutes();
+        const transactionId = "Medicare-" + "(" + today.getDay() + "-" + today.getMonth() + "-"
+            + today.getFullYear() + ")" + "-" + uuidv4()
 
         await tx.payment.create({
             data: {

@@ -8,32 +8,32 @@ const router = express.Router();
 
 router.get(
     "/",
-    // auth(UserRole.ADMIN, UserRole.SUPER_ADMIN,UserRole.DOCTOR),
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN,UserRole.DOCTOR),
     DoctorController.getAllDoctor
 );
 
 router.get(
     "/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN,UserRole.DOCTOR),
-    DoctorController.getSingleDoctrFromDB
+    DoctorController.getSingleDoctor
 );
 
 router.patch(
     "/update/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-    DoctorController.updateDoctrFromDB
+    DoctorController.updateDoctor
 );
 
 router.delete(
     "/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-    DoctorController.deleteDoctrFromDB
+    DoctorController.deleteDoctor
 );
 
 router.delete(
     "/:id/soft-delete",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-    DoctorController.deleteDoctrFromDB
+    DoctorController.softDeleteDoctor
 );
 
 router.post(

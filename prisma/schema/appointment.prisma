@@ -22,8 +22,6 @@ model Appointment {
     @@map("appintments")
 }
 
-
-
 model Prescription {
     id String @id @default(uuid())
 

@@ -1,272 +1,169 @@
 import prisma from "../../../shared/prisma";
 import { Doctor, Prisma, UserStatus } from "@prisma/client";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
+import { calculatePagination, IPagination } from "../../../halpers/paginationAndSoringHalper";
 import { doctorSearchableFields } from "./doctor.constants";
 import { IDoctorFilterRequest, IDoctorUpdate } from "./doctor.interface";
+import { IGenericResponse } from "../../interfaces/paginationSortFilter";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
 import { openRouter } from "../../../halpers/openRouter";
 
-const getAllDoctorFromDB = async (filter: IDoctorFilterRequest, options: IPaginationOptions): Promise<Doctor | null> => {
+const getAllDoctorFromDB = async (
+    filter: IDoctorFilterRequest,
+    options: IPagination
+): Promise<IGenericResponse<Doctor[]>> => {
     const { skip, limit, page } = calculatePagination(options);
+    const { searchTerm, specialties, ...filterData } = filter;
 
-    const { searchTerm, specialties, ...filterData } = filter
+    const andConditions: Prisma.DoctorWhereInput[] = [{ isDeleted: false }];
 
-    const andConditions: Prisma.DoctorWhereInput[] = [];
-
-    // fileter soft deleted data
-    andConditions.push({
-        isDeleted: false
-    })
-
-    // SEARCH TERM
     if (searchTerm) {
         andConditions.push({
-            OR: doctorSearchableFields.map((field) => ({
-                [field]: {
-                    contains: searchTerm,
-                    mode: "insensitive",
-                },
+            OR: doctorSearchableFields.map(field => ({
+                [field]: { contains: searchTerm, mode: "insensitive" },
             })),
         });
     }
 
-    if (specialties && specialties.length > 0) {
+    if (specialties) {
         andConditions.push({
             doctorSpecialties: {
                 some: {
                     specialities: {
-                        title: {
-                            contains: specialties,
-                            mode: 'insensitive'
-                        }
-                    }
-                }
-            }
-        })
+                        title: { contains: specialties, mode: "insensitive" },
+                    },
+                },
+            },
+        });
     }
 
-    // DIRECT FIELD FILTERING
-    if (Object.keys(filterData).length > 0) {
+    if (Object.keys(filterData).length) {
         andConditions.push({
-            AND: Object.keys(filterData).map((key) => ({
-                [key]: {
-                    equals: (filterData as any)[key],
-                },
+            AND: Object.entries(filterData).map(([key, value]) => ({
+                [key]: { equals: value },
             })),
         });
     }
 
-    // FINAL WHERE CONDITION
-    const whereCondition: Prisma.DoctorWhereInput =
-        andConditions.length > 0 ? { AND: andConditions } : {};
+    const whereCondition: Prisma.DoctorWhereInput = { AND: andConditions };
 
-    // QUERY
-    const result = await prisma.doctor.findMany({
+    const data = await prisma.doctor.findMany({
         where: whereCondition,
         skip,
         take: limit,
-        orderBy: options.sortBy && options.sortOrder
+        orderBy: options.sortBy
             ? { [options.sortBy]: options.sortOrder }
-            : { createdAt: 'desc' },
+            : { createdAt: "desc" },
         include: {
-            doctorSpecialties: {
-                include: {
-                    specialities: true
-                }
-            }
-        }
+            doctorSpecialties: { include: { specialities: true } },
+        },
     });
 
-    const total = await prisma.doctor.count({
-        where: whereCondition,
-    });
+    const total = await prisma.doctor.count({ where: whereCondition });
 
     return {
-        meta: {
-            total,
-            page,
-            limit,
-
-        },
-        data: result,
+        meta: { total, page, limit },
+        data,
     };
 };
 
-const getSingleDoctrFromDB = async (id: string): Promise<Doctor | null> => {
-
-    return await prisma.doctor.findUnique({
-        where: {
-            id
-        }
-    })
-
-}
-
-const updateDoctorFromDB = async (id: string, payload: IDoctorUpdate): Promise<Doctor | null> => {
-
-    const { specialties, ...doctorData } = payload;
-
-    const doctorInfo = await prisma.doctor.findUniqueOrThrow({
-        where: { id },
-    });
-
-    await prisma.$transaction(async (tx) => {
-
-        // update doctor main info
-        await tx.doctor.update({
-            where: { id },
-            data: doctorData,
-        });
-
-        if (specialties && specialties.length > 0) {
-
-            // DELETE specialties
-            const deleteSpecialties = specialties.filter(
-                (specialty) => specialty.isDeleted
-            );
-
-            for (const specialty of deleteSpecialties) {
-                await tx.doctorSpecialty.deleteMany({
-                    where: {
-                        doctorId: doctorInfo.id,
-                        specialtysId: specialty.specialtysId
-                    },
-                });
-            }
-
-            // CREATE specialties
-            const createSpecialties = specialties.filter(
-                (specialty) => !specialty.isDeleted
-            );
-
-            for (const specialty of createSpecialties) {
-                await tx.doctorSpecialty.create({
-                    data: {
-                        doctorId: doctorInfo.id,
-                        specialtysId: specialty.specialtysId
-                    },
-                });
-            }
-        }
-    });
-
-    // Return updated doctor with specialties
-    const result = await prisma.doctor.findUnique({
-        where: { id: doctorInfo.id },
+const getSingleDoctorFromDB = async (id: string): Promise<Doctor | null> => {
+    return prisma.doctor.findFirst({
+        where: { id, isDeleted: false },
         include: {
-            doctorSpecialties: {
-                include: {
-                    specialities: true,
-                },
-            },
+            doctorSpecialties: { include: { specialities: true } },
+            doctorSchedules: true,
         },
     });
-
-    return result;
 };
 
-const deleteDoctrFromDB = async (id: string): Promise<Doctor | null> => {
-    return await prisma.$transaction(async transactionClient => {
+const updateDoctorFromDB = async (
+    id: string,
+    payload: IDoctorUpdate
+): Promise<Doctor | null> => {
+    const { specialties, ...doctorData } = payload;
 
-        const deleteDoctor = await transactionClient.doctor.delete({
-            where: {
-                id
-            }
-        })
+    const doctor = await prisma.doctor.findUniqueOrThrow({ where: { id } });
 
-        await transactionClient.user.delete({
-            where: {
-                email: deleteDoctor.email
-            }
-        })
-        return deleteDoctor
-    })
-}
+    await prisma.$transaction(async tx => {
+        await tx.doctor.update({ where: { id }, data: doctorData });
 
-const softDoctrFromDB = async (id: string, status: UserStatus): Promise<Doctor | null> => {
+        if (specialties?.length) {
+            await tx.doctorSpecialty.deleteMany({ where: { doctorId: id } });
 
-    return await prisma.$transaction(async transactionClient => {
-
-        const deleteDoctor = await transactionClient.doctor.update({
-            where: {
-                id
-            },
-            data: {
-                isDeleted: true
-            }
-        })
-
-        await transactionClient.user.update({
-            where: {
-                email: deleteDoctor.email
-            },
-            data: {
-                status: UserStatus.DELETED
-            }
-        })
-        return deleteDoctor
-    })
-}
-
-const aiSuggestion = async (payload: { symptom: string }) => {
-    if (!(payload && payload.symptom)) {
-        throw new AppError(httpStatus.BAD_REQUEST, "Symptom is Required");
-    }
-
-    // Fetch doctors from database
-    const doctors = await prisma.doctor.findMany({
-        where: { isDeleted: false },
-        include: { doctorSpecialties: true }
-    })
-
-    // Simple and direct prompt
-    const prompt = `
-    You are a professional Medical Assistant AI.
-     Your task is to analyze user symptoms and
-     match them with the most relevant doctor
-      specialties from the provided list
-    Symptom: "${payload.symptom}"
-    Task: Recommend suitable doctors. 
-    Return ONLY a JSON object with full doctor data list in json:
-    ${JSON.stringify(doctors, null, 2)}
-    `;
-
-    const completion = await openRouter.chat.send({
-        model: 'mistralai/devstral-2512:free',
-        messages: [
-            {
-                role: "system",
-                content: "You are a medical assistant. Reply only in JSON."
-            },
-            {
-                role: 'user',
-                content: prompt
-            },
-        ],
-        stream: false,
+            await tx.doctorSpecialty.createMany({
+                data: specialties.map(s => ({
+                    doctorId: id,
+                    specialtysId: s.specialtiesId
+                })),
+            });
+        }
     });
 
-    const rawContent = completion.choices[0].message.content;
+    return prisma.doctor.findUnique({
+        where: { id },
+        include: { doctorSpecialties: { include: { specialities: true } } },
+    });
+};
 
-    const cleanedContent = rawContent
-        .replace(/```json/i, "")
-        .replace(/```/g, "")
-        .trim();
+const deleteDoctorFromDB = async (id: string): Promise<Doctor> => {
+    return prisma.$transaction(async tx => {
+        const doctor = await tx.doctor.delete({ where: { id } });
+        await tx.user.delete({ where: { email: doctor.email } });
+        return doctor;
+    });
+};
 
-    const parsedDoctors = JSON.parse(cleanedContent);
+const softDeleteDoctorFromDB = async (
+    id: string,
+    status: UserStatus
+): Promise<Doctor> => {
+    return prisma.$transaction(async tx => {
+        const doctor = await tx.doctor.update({
+            where: { id },
+            data: { isDeleted: true },
+        });
 
-    return parsedDoctors;
+        await tx.user.update({
+            where: { email: doctor.email },
+            data: { status },
+        });
 
+        return doctor;
+    });
+};
 
+const aiSuggestion = async (payload: { symptom: string }) => {
+    if (!payload?.symptom) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Symptom is required");
+    }
+
+    const doctors = await prisma.doctor.findMany({
+        where: { isDeleted: false },
+        include: { doctorSpecialties: true },
+    });
+
+    const completion = await openRouter.chat.send({
+        model: "mistralai/devstral-2512:free",
+        messages: [
+            { role: "system", content: "Reply only in JSON" },
+            {
+                role: "user",
+                content: `Symptom: ${payload.symptom}\nDoctors:\n${JSON.stringify(doctors)}`,
+            },
+        ],
+    });
+
+    return JSON.parse(
+        completion?.choices[0]?.message.content?.replace(/```json|```/g, "").trim() 
+    );
 };
 
 export const DoctorService = {
     getAllDoctorFromDB,
-    getSingleDoctrFromDB,
+    getSingleDoctorFromDB,
     updateDoctorFromDB,
-    deleteDoctrFromDB,
-    softDoctrFromDB,
-    aiSuggestion
+    deleteDoctorFromDB,
+    softDeleteDoctorFromDB,
+    aiSuggestion,
 };
