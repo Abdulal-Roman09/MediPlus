@@ -10,7 +10,7 @@ import { appointmentFilterableFields } from "./appoinment.contanct";
 
 const createAppoinment = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user
-    const result = await AppoinmentServices.createAppoinment(user as IAuthUser, req.body);
+    const result = await AppoinmentServices.createAppointment(user as IAuthUser, req.body);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,

@@ -1,86 +1,102 @@
-import { Prisma, UserRole } from "@prisma/client";
-import prisma from "../../../shared/prisma";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import { IAuthUser } from "../../interfaces/common";
-import AppError from "../../errors/AppError";
-import httpStatus from "http-status";
 import { v4 as uuidv4 } from 'uuid';
+import prisma from "../../../shared/prisma";
+import { stripe } from "../../../halpers/stripe";
+import { Prisma, UserRole } from "@prisma/client";
+import { IAuthUser } from "../../interfaces/common";
+import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 
-
-const createAppoinment = async (user: IAuthUser, payload: any) => {
-
+export const createAppointment = async (user: IAuthUser, payload: any) => {
     const patientData = await prisma.patient.findFirstOrThrow({
-        where: {
-            email: user?.email
-        }
-    })
+        where: { email: user?.email },
+    });
 
     const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
             id: payload.doctorId,
-            isDeleted: false
-        }
-    })
+            isDeleted: false,
+        },
+    });
 
-    const isBookedSchedule = await prisma.doctorSchedules.findFirst({
+    const isBookedOrNot = await prisma.doctorSchedules.findFirst({
         where: {
             doctorId: doctorData.id,
             scheduleId: payload.scheduleId,
-            isBooked: false
-        }
-    })
+            isBooked: false,
+        },
+    });
 
-    if (!isBookedSchedule) {
-        throw new AppError(httpStatus.BAD_REQUEST, "Schedule already booked");
+    if (!isBookedOrNot) {
+        throw new Error("Schedule already booked");
     }
 
-    const videoCallingId: string = uuidv4();
+    const videoCallingId = uuidv4();
 
     const result = await prisma.$transaction(async (tx) => {
-
-        const appoinmentData = await tx.appointment.create({
+        const appointmentData = await tx.appointment.create({
             data: {
                 patientId: patientData.id,
                 doctorId: doctorData.id,
                 scheduleId: payload.scheduleId,
-                videoCallingId
+                videoCallingId,
             },
-            include: {
-                patient: true,
-                doctor: true,
-                schedule: true,
-            }
-        })
+        });
 
         await tx.doctorSchedules.update({
             where: {
                 doctorId_scheduleId: {
                     doctorId: doctorData.id,
-                    scheduleId: payload.scheduleId
-                }
+                    scheduleId: payload.scheduleId,
+                },
             },
             data: {
                 isBooked: true,
-                appointmentId: appoinmentData.id
-            }
-        })
-        // payment
-        const today = new Date()
-        const transactionId = "Medicare-" + "(" + today.getDay() + "-" + today.getMonth() + "-"
-            + today.getFullYear() + ")" + "-" + uuidv4()
+            },
+        });
 
-        await tx.payment.create({
+        const today = new Date();
+        const transactionId = `Medicare-(${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()})-${uuidv4()}`;
+
+        const paymentData = await tx.payment.create({
             data: {
-                appointmentId: appoinmentData.id,
+                appointmentId: appointmentData.id,
                 amount: doctorData.appointmentFee,
-                transactionId
-            }
-        })
-        return appoinmentData
-    })
-    return result
+                transactionId,
+            },
+        });
 
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            customer_email: user?.email,
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: `Appointment with Dr. ${doctorData.name}`,
+                        },
+                        unit_amount: doctorData.appointmentFee * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            metadata: {
+                appointmentId: appointmentData.id,
+                paymentId: paymentData.id,
+            },
+            success_url: `https://www.programming-hero.com/`,
+            cancel_url: `https://next.programming-hero.com/`
+
+        });
+
+        return {
+            paymentUrl: session.url,
+        };
+    });
+
+    return result;
 };
+
 
 const getMyAppoinmentFromDB = async (user: IAuthUser, filters: any, options: any) => {
 
@@ -235,7 +251,7 @@ const getAllAppoinmentFromDB = async (user: IAuthUser, filters: any, options: an
 }
 
 export const AppoinmentServices = {
-    createAppoinment,
+    createAppointment,
     getAllAppoinmentFromDB,
     getMyAppoinmentFromDB
 
