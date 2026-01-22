@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import prisma from "../../../shared/prisma";
 import { stripe } from "../../../halpers/stripe";
-import { Prisma, UserRole } from "@prisma/client";
+import { AppointmentStatus, Prisma, UserRole } from "@prisma/client";
 import { IAuthUser } from "../../interfaces/common";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status'
 
 export const createAppointment = async (user: IAuthUser, payload: any) => {
     const patientData = await prisma.patient.findFirstOrThrow({
@@ -96,7 +98,6 @@ export const createAppointment = async (user: IAuthUser, payload: any) => {
 
     return result;
 };
-
 
 const getMyAppoinmentFromDB = async (user: IAuthUser, filters: any, options: any) => {
 
@@ -250,9 +251,38 @@ const getAllAppoinmentFromDB = async (user: IAuthUser, filters: any, options: an
     };
 }
 
+const updateAppoinmentStatus = async (appoinmentId: string, status: AppointmentStatus, user: IAuthUser) => {
+
+    const appointmentData = await prisma.appointment.findUniqueOrThrow({
+        where: {
+            id: appoinmentId
+        },
+        include: {
+            doctor: true
+        }
+    })
+    
+    if (user?.role) {
+        if (user.email === appointmentData.doctor.email) {
+            throw new AppError(httpStatus.BAD_REQUEST, "This is not Your Appintment")
+        }
+    }
+
+    const result = await prisma.appointment.update({
+        where: {
+            id: appoinmentId
+        },
+        data: {
+            status
+        }
+    })
+    return result
+}
+
 export const AppoinmentServices = {
     createAppointment,
     getAllAppoinmentFromDB,
-    getMyAppoinmentFromDB
+    getMyAppoinmentFromDB,
+    updateAppoinmentStatus
 
 };

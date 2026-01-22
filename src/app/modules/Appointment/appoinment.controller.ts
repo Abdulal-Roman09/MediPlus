@@ -48,10 +48,27 @@ const getAllAppoinmentFromDB = catchAsync(async (req: Request & { user?: IAuthUs
     });
 });
 
+const updateAppoinmentStatus = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+
+    const { id } = req.params;
+    const { status } = req.body
+    const user = req.body
+
+    const result = await AppoinmentServices.updateAppoinmentStatus(id, status, user as IAuthUser);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Appoinment status  successfully",
+        data: result,
+    });
+});
+
 
 export const AppoinmentController = {
     createAppoinment,
     getAllAppoinmentFromDB,
-    getMyAppoinmentFromDB
+    getMyAppoinmentFromDB,
+    updateAppoinmentStatus
 
 };
