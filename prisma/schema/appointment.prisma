@@ -18,8 +18,9 @@ model Appointment {
     payment      Payment?
     prescription Prescription?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    reviews   Reviews[]
 
     @@map("appointments")
 }
@@ -43,3 +44,5 @@ model Prescription {
 
     @@map("prescriptions")
 }
+
+

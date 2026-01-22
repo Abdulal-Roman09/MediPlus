@@ -49,6 +49,7 @@ model Patient {
   medicalReports MedicalReport[]
   appointments   Appointment[]
   prescriptions  Prescription[]
+  reviews        Reviews[]
 
   @@map("patients")
 }
@@ -78,6 +79,8 @@ model Doctor {
   doctorSchedules   DoctorSchedules[]
   appointments      Appointment[]
   prescriptions     Prescription[]
+  reviews           Reviews[]
 
   @@map("doctors")
 }
+
