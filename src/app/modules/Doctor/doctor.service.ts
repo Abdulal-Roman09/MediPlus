@@ -71,8 +71,10 @@ const getSingleDoctorFromDB = async (id: string): Promise<Doctor | null> => {
     return prisma.doctor.findFirst({
         where: { id, isDeleted: false },
         include: {
+
             doctorSpecialties: { include: { specialities: true } },
             doctorSchedules: true,
+            reviews: true
         },
     });
 };
@@ -155,7 +157,7 @@ const aiSuggestion = async (payload: { symptom: string }) => {
     });
 
     return JSON.parse(
-        completion?.choices[0]?.message.content?.replace(/```json|```/g, "").trim() 
+        completion?.choices[0]?.message.content?.replace(/```json|```/g, "").trim()
     );
 };
 
