@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
 import httpStatus from "http-status";
-import sendResponse from "../../../shared/sendResponse";
+import { Request, Response } from "express";
+import { pick } from "../../../shared/pick";
 import catchAsync from "../../../shared/catchAsync";
 import { IAuthUser } from "../../interfaces/common";
-import { pick } from "../../../shared/pick";
+import sendResponse from "../../../shared/sendResponse";
 import { AppoinmentServices } from "./appoinment.service";
 import { appointmentFilterableFields } from "./appoinment.contanct";
 
@@ -65,10 +65,10 @@ const updateAppoinmentStatus = catchAsync(async (req: Request & { user?: IAuthUs
 });
 
 
+
 export const AppoinmentController = {
     createAppoinment,
     getAllAppoinmentFromDB,
     getMyAppoinmentFromDB,
     updateAppoinmentStatus
-
 };
