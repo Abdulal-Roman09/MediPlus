@@ -1,10 +1,12 @@
 import cors from 'cors'
+import cron from 'node-cron';
 import router from './app/routes';
 import httpStatus from 'http-status'
 import cookiParser from 'cookie-parser'
 import express, { Application } from 'express';
 import globalErrorHandler from './app/middleWares/globalErrorHandler.ts';
 import { PaymentController } from './app/modules/Payment/payment.controller';
+import { AppoinmentServices } from './app/modules/Appointment/appoinment.service';
 
 const app: Application = express();
 
@@ -21,6 +23,15 @@ app.post(
 
 app.use(express.json());
 app.use(cookiParser())
+
+cron.schedule('* * * * *', () => {
+  try {
+    AppoinmentServices.cancelUnpaidAppointments()
+    console.log("is called")
+  } catch (err) {
+    console.log(err)
+  }
+});
 
 // all routes
 app.use('/api/v1/', router)
