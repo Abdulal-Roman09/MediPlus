@@ -1,12 +1,12 @@
+import httpStatus from "http-status";
 import prisma from "../../../shared/prisma";
+import AppError from "../../errors/AppError";
+import { openRouter } from "../../../halpers/openRouter";
 import { Doctor, Prisma, UserStatus } from "@prisma/client";
-import { calculatePagination, IPagination } from "../../../halpers/paginationAndSoringHalper";
 import { doctorSearchableFields } from "./doctor.constants";
 import { IDoctorFilterRequest, IDoctorUpdate } from "./doctor.interface";
 import { IGenericResponse } from "../../interfaces/paginationSortFilter";
-import AppError from "../../errors/AppError";
-import httpStatus from "http-status";
-import { openRouter } from "../../../halpers/openRouter";
+import { calculatePagination, IPagination } from "../../../halpers/paginationAndSoringHalper";
 
 const getAllDoctorFromDB = async (
     filter: IDoctorFilterRequest,

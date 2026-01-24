@@ -12,4 +12,10 @@ router.post(
     StatisticsController.patientCount
 )
 
+router.get(
+    "/",
+    auth(UserRole.DOCTOR, UserRole.ADMIN, UserRole.PATIENT),
+    StatisticsController.dashboardMetaData
+)
+
 export const StatisticsRoutes = router;

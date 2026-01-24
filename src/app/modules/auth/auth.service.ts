@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-import prisma from "../../../shared/prisma";
 import bcrypt from "bcryptjs";
-import { IUserLogin, IUserResetPass } from "./auth.interface";
-import { generateToken, verifyToken } from "../../../halpers/jwtHelper";
-import { UserStatus } from "@prisma/client";
+import httpStatus from 'http-status'
 import config from "../../../config";
 import emailSender from "./emailSender";
+import { UserStatus } from "@prisma/client";
+import prisma from "../../../shared/prisma";
 import AppError from '../../errors/AppError';
-import httpStatus from 'http-status'
+import { IUserLogin, IUserResetPass } from "./auth.interface";
+import { generateToken, verifyToken } from "../../../halpers/jwtHelper";
 
 
 const loginUser = async (payload: IUserLogin) => {

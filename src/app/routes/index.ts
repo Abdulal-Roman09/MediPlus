@@ -1,15 +1,15 @@
 import express from 'express';
+import { AuthRoutes } from '../modules/Auth/auth.route';
 import { UserRoutes } from '../modules/User/user.routes';
 import { AdminRoutes } from '../modules/Admin/admin.routes';
-import { AuthRoutes } from '../modules/Auth/auth.route';
-import { SpecialtiesRoutes } from '../modules/Specialties/specialties.route';
 import { DoctorRoutes } from '../modules/Doctor/doctor.routes';
+import { ReviewsRoutes } from '../modules/reviews/reviews.route';
 import { PatientRoutes } from '../modules/Patient/patient.routes';
 import { ScheduleRoutes } from '../modules/Schedule/schedule.routes';
-import { DoctorScheduleRoutes } from '../modules/DoctorSchedule/doctorSchedule.routes';
-import { AppoinmentRoutes } from '../modules/Appointment/appointment.routes';
 import { StatisticsRoutes } from '../modules/Statistics/statistics.routes';
-import { ReviewsRoutes } from '../modules/reviews/reviews.route';
+import { SpecialtiesRoutes } from '../modules/Specialties/specialties.route';
+import { AppoinmentRoutes } from '../modules/Appointment/appointment.routes';
+import { DoctorScheduleRoutes } from '../modules/DoctorSchedule/doctorSchedule.routes';
 
 const router = express.Router();
 

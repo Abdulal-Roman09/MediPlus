@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
-import catchAsync from "../../../shared/catchAsync";
-import { pick } from "../../../shared/pick";
-import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
-import { patientFilterableFields } from "./patient.contance";
+import { Request, Response } from "express";
+import { pick } from "../../../shared/pick";
 import { PatientService } from "./patient.service";
+import catchAsync from "../../../shared/catchAsync";
+import sendResponse from "../../../shared/sendResponse";
+import { patientFilterableFields } from "./patient.contance";
+
 
 const getAllPatient = catchAsync(async (req: Request, res: Response) => {
     const filters = pick(req.query, patientFilterableFields);
@@ -16,8 +17,8 @@ const getAllPatient = catchAsync(async (req: Request, res: Response) => {
         statusCode: httpStatus.OK,
         success: true,
         message: "Patients fetched successfully",
-        meta: result.meta,
-        data: result.data,
+        meta: result?.meta,
+        data: result?.data,
     });
 });
 

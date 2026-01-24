@@ -1,9 +1,9 @@
-import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
 import { ISchedule } from "./schedule.interface";
 import { Prisma, Schedule } from "@prisma/client";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 import { IAuthUser } from "../../interfaces/common";
+import { addHours, addMinutes, format } from "date-fns";
+import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 
 const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
     const { startDate, endDate, startTime, endTime } = payload;

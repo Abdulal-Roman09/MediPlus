@@ -1,6 +1,4 @@
-
-
- export type IAdmiFilterRequest = {
+export type IAdmiFilterRequest = {
     name?: string | undefined;
     email?: string | undefined;
     contactNumber?: string | undefined;

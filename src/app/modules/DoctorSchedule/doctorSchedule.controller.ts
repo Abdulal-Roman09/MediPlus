@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
 import httpStatus from "http-status";
-import sendResponse from "../../../shared/sendResponse";
-import catchAsync from "../../../shared/catchAsync";
-import { DoctorScheduleServices } from "./doctorSchedule.service";
-import { IAuthUser } from "../../interfaces/common";
+import { Request, Response } from "express";
 import { pick } from "../../../shared/pick";
+import { IAuthUser } from "../../interfaces/common";
+import catchAsync from "../../../shared/catchAsync";
+import sendResponse from "../../../shared/sendResponse";
+import { DoctorScheduleServices } from "./doctorSchedule.service";
 import { DoctorScheduleSearchableFields } from "./doctorSchedule.constance";
 
 

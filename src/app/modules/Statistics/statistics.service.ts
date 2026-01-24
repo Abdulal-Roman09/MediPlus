@@ -1,7 +1,9 @@
-import { Request } from "express";
-import { IAuthUser } from "../../interfaces/common";
-import { endOfMonth, startOfMonth, format, eachMonthOfInterval, subMonths } from "date-fns";
+import httpStatus from 'http-status'
 import prisma from "../../../shared/prisma";
+import AppError from "../../errors/AppError";
+import { IAuthUser } from "../../interfaces/common";
+import { PaymentStatus, UserRole } from "@prisma/client";
+import { endOfMonth, startOfMonth, format, eachMonthOfInterval, subMonths } from "date-fns";
 
 
 const patientCount = async (user: IAuthUser, period: number) => {
@@ -31,7 +33,7 @@ const patientCount = async (user: IAuthUser, period: number) => {
             },
         });
 
-       // Calculate unique patients using Set
+        // Calculate unique patients using Set
         const uniquePatients = new Set(appointments.map((app) => app.patientId));
         return { thisMonth: uniquePatients.size };
     }
@@ -56,7 +58,7 @@ const patientCount = async (user: IAuthUser, period: number) => {
         });
 
         const monthlyData = new Map<string, Set<string>>();
- 
+
         appointments.forEach((app) => {
             const monthKey = format(app.createdAt, 'yyyy-MM');
             if (!monthlyData.has(monthKey)) {
@@ -83,8 +85,60 @@ const patientCount = async (user: IAuthUser, period: number) => {
 
 }
 
+const dashboardMetaData = async (user: IAuthUser) => {
+    let metaData;
+
+    switch (user?.role) {
+        case UserRole.ADMIN:
+            metaData = "Admin metadata"
+            break
+        case UserRole.DOCTOR:
+            metaData = "doctor metaData"
+            break
+        case UserRole.PATIENT:
+            metaData = "patient meta data"
+            break
+        default:
+            throw new AppError(httpStatus.BAD_REQUEST, "Invalid user role")
+    }
+    return metaData
+
+}
+
+const getAdminMetaData = async () => {
+    const patientCount = await prisma.patient.count()
+    const doctorCount = await prisma.doctor.count()
+    const adminCount = await prisma.admin.count()
+    const appointmentCount = await prisma.appointment.count()
+    const paymentCount = await prisma.payment.count()
+
+    const totalReviewnaw = await prisma.payment.aggregate({
+        _sum: {
+            amount: true
+        },
+        where: {
+            status: PaymentStatus.PAID
+        }
+    })
+}
+
+const getBarChartData = async () => {
+    const appointmentCountPerMounth = await prisma.$queryRaw`
+    SELECT DATE_TRUNC('mounth',"createdAt") as month
+    CAST (COUNT (*) AS INTEGER) AS count
+    FROM "appointments"
+    GROPE BY mounth
+    ORDER BY mounth ASC
+    `
+
+    return appointmentCountPerMounth
+}
+
 
 export const StatisticsServices = {
-    patientCount
+    patientCount,
+    dashboardMetaData,
+    getBarChartData,
+    getAdminMetaData
 
 }

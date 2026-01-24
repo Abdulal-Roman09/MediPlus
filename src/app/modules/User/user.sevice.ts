@@ -1,14 +1,13 @@
-import { Admin, Doctor, Patient, Prisma, UserRole, UserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import prisma from "../../../shared/prisma";
-import config from "../../../config";
-import sendToCloudinary from "../../../halpers/imageUploads/sendToCloudinary";
-import { IUploadedFile } from "../../interfaces/file";
-import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import { userFilterableFields, userSearchAbleFields } from "./user.contance";
-import { IAuthUser } from "../../interfaces/common";
 import { Request } from "express";
+import config from "../../../config";
+import prisma from "../../../shared/prisma";
+import { IAuthUser } from "../../interfaces/common";
+import { IUploadedFile } from "../../interfaces/file";
+import { userFilterableFields, userSearchAbleFields } from "./user.contance";
+import sendToCloudinary from "../../../halpers/imageUploads/sendToCloudinary";
+import { Admin, Doctor, Patient, Prisma, UserRole, UserStatus } from "@prisma/client";
+import { calculatePagination, IPagination } from "../../../halpers/paginationAndSoringHalper";
 
 const createAdmin = async (req: any): Promise<Admin> => {
 
@@ -103,7 +102,7 @@ const createPatient = async (req: any): Promise<Patient> => {
     return result;
 };
 
-const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
+const getAllUserFromDB = async (params: any, options: IPagination) => {
 
     const { skip, limit, page, sortBy, sortOrder } = calculatePagination(options);
 

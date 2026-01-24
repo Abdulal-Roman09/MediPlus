@@ -1,10 +1,10 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { UserController } from './user.controller';
 import auth from '../../middleWares/auth';
 import { UserRole } from '@prisma/client';
-import fileUploader from '../../../halpers/imageUploads/multer';
+import { UserController } from './user.controller';
 import { UserValidationSchema } from './user.validation';
+import fileUploader from '../../../halpers/imageUploads/multer';
 import validateRequest from '../../middleWares/validateRequest';
+import express, { NextFunction, Request, Response } from 'express';
 
 const router = express.Router();
 router.get(

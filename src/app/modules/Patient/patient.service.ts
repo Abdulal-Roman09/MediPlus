@@ -1,11 +1,10 @@
 import prisma from "../../../shared/prisma";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import { IPaginationOptions } from "../../interfaces/paginationSortFilter";
 import { patientSearchAbleFields } from "./patient.contance";
 import { Patient, Prisma, UserStatus } from "@prisma/client";
 import { IPatientFilterRequest, IPatientUpdate } from "./patient.interface";
+import { calculatePagination, IPagination } from "../../../halpers/paginationAndSoringHalper";
 
-const getAllPatientFromDB = async (params: IPatientFilterRequest, options: IPaginationOptions): Promise<Patient | null> => {
+const getAllPatientFromDB = async (params: IPatientFilterRequest, options: IPagination): Promise<Patient | null> => {
 
     const { skip, limit, page, } = calculatePagination(options);
     const { searchTerm, ...filterData } = params;

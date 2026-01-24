@@ -27,7 +27,6 @@ app.use(cookiParser())
 cron.schedule('* * * * *', () => {
   try {
     AppoinmentServices.cancelUnpaidAppointments()
-    console.log("is called")
   } catch (err) {
     console.log(err)
   }

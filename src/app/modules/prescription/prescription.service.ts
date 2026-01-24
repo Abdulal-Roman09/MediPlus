@@ -1,8 +1,8 @@
-import { AppointmentStatus, PaymentStatus, Prescription, UserRole } from "@prisma/client";
-import { IAuthUser } from "../../interfaces/common";
+import httpStatus from 'http-status'
 import prisma from "../../../shared/prisma";
 import AppError from "../../errors/AppError";
-import httpStatus from 'http-status'
+import { IAuthUser } from "../../interfaces/common";
+import { AppointmentStatus, PaymentStatus, Prescription, UserRole } from "@prisma/client";
 
 
 const createPaescription = async (user: IAuthUser, payload: Partial<Prescription>) => {

@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
 import httpStatus from "http-status";
-import sendResponse from "../../../shared/sendResponse";
 import { pick } from "../../../shared/pick";
-import catchAsync from "../../../shared/catchAsync";
-import { doctorFilterableFields } from "./doctor.constants";
-import { DoctorService } from "./doctor.service";
+import { Request, Response } from "express";
 import { UserStatus } from "@prisma/client";
+import { DoctorService } from "./doctor.service";
+import catchAsync from "../../../shared/catchAsync";
+import sendResponse from "../../../shared/sendResponse";
+import { doctorFilterableFields } from "./doctor.constants";
 
 const getAllDoctor = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, doctorFilterableFields);

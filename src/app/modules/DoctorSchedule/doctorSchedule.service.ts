@@ -1,9 +1,9 @@
+import httpStatus from "http-status";
 import { Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma";
-import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import { IAuthUser } from "../../interfaces/common";
 import AppError from "../../errors/AppError";
-import httpStatus from "http-status";
+import { IAuthUser } from "../../interfaces/common";
+import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
 
 
 const insertIntoDB = async (user: any, payload: { specialtysIds: string[] }) => {

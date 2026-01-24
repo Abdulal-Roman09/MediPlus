@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
 import httpStatus from "http-status";
-import sendResponse from "../../../shared/sendResponse";
+import { Request, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
-import { StatisticsServices } from "./statistics.service";
 import { IAuthUser } from "../../interfaces/common";
+import sendResponse from "../../../shared/sendResponse";
+import { StatisticsServices } from "./statistics.service";
 
 
 const patientCount = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -20,7 +20,22 @@ const patientCount = catchAsync(async (req: Request & { user?: IAuthUser }, res:
 });
 
 
+const dashboardMetaData = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+
+    const user = req.user
+    const result = await StatisticsServices.dashboardMetaData(user as IAuthUser);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "patient cournt created successfully",
+        data: result,
+    });
+});
+
+
 export const StatisticsController = {
-    patientCount
+    patientCount,
+    dashboardMetaData
 
 };

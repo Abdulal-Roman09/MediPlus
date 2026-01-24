@@ -1,11 +1,12 @@
+import httpStatus from 'http-status'
 import { v4 as uuidv4 } from 'uuid';
 import prisma from "../../../shared/prisma";
+import AppError from '../../errors/AppError';
 import { stripe } from "../../../halpers/stripe";
-import { AppointmentStatus, PaymentStatus, Prisma, UserRole } from "@prisma/client";
 import { IAuthUser } from "../../interfaces/common";
 import { calculatePagination } from "../../../halpers/paginationAndSoringHalper";
-import AppError from '../../errors/AppError';
-import httpStatus from 'http-status'
+import { AppointmentStatus, PaymentStatus, Prisma, UserRole } from "@prisma/client";
+
 
 export const createAppointment = async (user: IAuthUser, payload: any) => {
     const patientData = await prisma.patient.findFirstOrThrow({

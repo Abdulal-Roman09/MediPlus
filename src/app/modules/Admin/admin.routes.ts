@@ -1,9 +1,9 @@
 import express from 'express';
-import { AdminController } from './admin.controller';
-import validateRequest from '../../middleWares/validateRequest';
-import { AdminValidationSchema } from './admin.validation';
-import auth from '../../middleWares/auth';
 import { UserRole } from '@prisma/client';
+import auth from '../../middleWares/auth';
+import { AdminController } from './admin.controller';
+import { AdminValidationSchema } from './admin.validation';
+import validateRequest from '../../middleWares/validateRequest';
 
 
 const router = express.Router();
